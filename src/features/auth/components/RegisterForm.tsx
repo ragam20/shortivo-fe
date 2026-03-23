@@ -1,23 +1,61 @@
 import { Button } from "@/components/ui/button";
-import { Form, FormField } from "@/components/ui/form/form";
+import { Form, FormField, PasswordFormField } from "@/components/ui/form/form";
 import { Input } from "@/components/ui/input";
 import { H3, P } from "@/components/ui/typography";
 import { z } from "zod";
 import googleICPath from "@/assets/ic_google_color.svg";
+import { useState } from "react";
 
-type RegisterForm = {
-  onSuccess: () => void;
+const passwordRules = [
+  {
+    label: "Must be at least 5 characters",
+    test: (val: string) => val.length >= 5,
+  },
+  {
+    label: "Contains a number",
+    test: (val: string) => /[0-9]/.test(val),
+  },
+  {
+    label: "Contains upppercase",
+    test: (val: string) => /[A-Z]/.test(val),
+  },
+];
+
+type PasswordCheck = {
+  label: string;
+  isValid: boolean;
 };
+
+function checkPassword(password: string): PasswordCheck[] {
+  return passwordRules.map((rule) => ({
+    label: rule.label,
+    isValid: rule.test(password),
+  }));
+}
+
+const passwordSchema = z.string().superRefine((val, ctx) => {
+  passwordRules.forEach((rule) => {
+    if (!rule.test(val)) {
+      ctx.addIssue({
+        code: "custom",
+        message: rule.label,
+      });
+    }
+  });
+});
 
 const schema = z.object({
   username: z.string().min(4, "Username is required"),
-  email: z.string().min(1, "Email is required").email("Invalid Email"),
-  password: z.string().min(5, "Password is required | at least 5 charachters"),
+  email: z.string().nonempty("Email is required").email("Invalid email"),
+  password: passwordSchema,
 });
 
 type RegisterFormValues = z.infer<typeof schema>;
 
 export const RegisterForm = () => {
+  const [showPassword, setShowPassword] = useState(false);
+  const [showCheckList, setShowCheckList] = useState(false);
+
   const onSubmit = (data: RegisterFormValues) => {
     console.log(data);
   };
@@ -49,32 +87,62 @@ export const RegisterForm = () => {
       </div>
 
       <Form id="register-form" schema={schema} onSubmit={onSubmit}>
-        {({ register, errors }) => (
-          <>
-            <FormField label="Username" error={errors.username}>
-              <Input
-                className="border focus-visible:ring-primary/10 outline-none p-5 w-full"
-                {...register("username")}
-              />
-            </FormField>
+        {({ register, errors, watch, state }) => {
+          const password = watch("password", "");
+          const checks = checkPassword(password);
 
-            <FormField label="Email" error={errors.email}>
-              <Input
-                type="email"
-                className="border p-5 focus-visible:ring-primary/10 w-full"
-                {...register("email")}
-              />
-            </FormField>
+          return (
+            <>
+              <FormField label="Username" error={errors.username}>
+                <Input
+                  className="border focus-visible:ring-primary/10 outline-none p-5 w-full"
+                  {...register("username")}
+                />
+              </FormField>
 
-            <FormField label="Password" error={errors.password}>
-              <Input
-                type="password"
-                className="border p-5 focus-visible:ring-primary/10 w-full"
-                {...register("password")}
-              />
-            </FormField>
-          </>
-        )}
+              <FormField label="Email" error={errors.email}>
+                <Input
+                  type="email"
+                  className="border p-5 focus-visible:ring-primary/10 w-full"
+                  {...register("email")}
+                />
+              </FormField>
+
+              <PasswordFormField
+                label="Password"
+                error={errors.password}
+                showPassword={showPassword}
+                setShowPassword={setShowPassword}
+              >
+                <Input
+                  type={showPassword ? "text" : "password"}
+                  className="border p-5 focus-visible:ring-primary/10 outline-none w-full"
+                  {...register("password")}
+                  onFocus={() => setShowCheckList(true)}
+                />
+              </PasswordFormField>
+
+              {state.touchedFields && showCheckList && (
+                <ul className="mt-2 space-y-1">
+                  {checks.map((c, i) => (
+                    <li
+                      key={i}
+                      className={
+                        c.isValid
+                          ? "text-green-500"
+                          : errors.password
+                            ? "text-red-500"
+                            : "text-gray-500"
+                      }
+                    >
+                      {c.isValid ? "✔" : "✖"} {c.label}
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </>
+          );
+        }}
       </Form>
       <Button type="submit" form="register-form" className="my-4 w-full py-5">
         Create account
