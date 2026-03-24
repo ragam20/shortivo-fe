@@ -1,13 +1,11 @@
-import { AuthLayout } from "@/components/layouts/AuthLayout";
-import { LoginForm } from "@/features/auth/components/LoginForm";
-import { RegisterForm } from "@/features/auth/components/RegisterForm";
+import { Landing } from "./routes/Landing";
 
 export const App = () => {
   return (
     <>
-      <AuthLayout title="Login Account | Shortivo">
-        <RegisterForm />
-      </AuthLayout>
+      <div className="overflow-hidden">
+        <Landing />
+      </div>
     </>
   );
 };
