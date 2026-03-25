@@ -5,6 +5,7 @@ import { H3, P } from "@/components/ui/typography";
 import { z } from "zod";
 import googleICPath from "@/assets/ic_google_color.svg";
 import { useState } from "react";
+import { paths } from "@/config/paths";
 
 const passwordRules = [
   {
@@ -52,7 +53,12 @@ const schema = z.object({
 
 type RegisterFormValues = z.infer<typeof schema>;
 
-export const RegisterForm = () => {
+type RegisterForm = {
+  onSuccess: () => void;
+  navigateTo: (path: string) => void;
+};
+
+export const RegisterForm = ({ onSuccess, navigateTo }: RegisterForm) => {
   const [showPassword, setShowPassword] = useState(false);
   const [showCheckList, setShowCheckList] = useState(false);
 
@@ -68,7 +74,12 @@ export const RegisterForm = () => {
         </H3>
         <P className="text-center text-sm xl:text-left mt-1">
           Already part of us?{" "}
-          <span className="text-blue-400 cursor-pointer" onClick={() => {}}>
+          <span
+            className="text-blue-400 cursor-pointer"
+            onClick={() => {
+              navigateTo(paths.auth.login.path);
+            }}
+          >
             Log in
           </span>
         </P>

@@ -5,6 +5,8 @@ import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import googleICPath from "@/assets/ic_google_color.svg";
 import { useState } from "react";
+import { useNavigate } from "react-router";
+import { paths } from "@/config/paths";
 
 const schema = z.object({
   email: z.string().nonempty("Email is required").email("Invalid email"),
@@ -13,7 +15,12 @@ const schema = z.object({
 
 type LoginFormValues = z.infer<typeof schema>;
 
-export const LoginForm = () => {
+type LoginForm = {
+  onSuccess: () => void;
+  navigateTo: (path: string) => void;
+};
+
+export const LoginForm = ({ onSuccess, navigateTo }: LoginForm) => {
   const [showPassword, setShowPassword] = useState(false);
 
   const onSubmit = (data: LoginFormValues) => {
@@ -29,7 +36,12 @@ export const LoginForm = () => {
           </H3>
           <P className="text-center text-sm xl:text-left mt-1">
             Don't have account?{" "}
-            <span className="text-blue-400 cursor-pointer" onClick={() => {}}>
+            <span
+              className="text-blue-400 cursor-pointer"
+              onClick={() => {
+                navigateTo(paths.auth.register.path);
+              }}
+            >
               signup
             </span>
           </P>
