@@ -1,8 +1,8 @@
-import type { AuthResponse } from "@/types/api";
-import { publicApi } from "./apiClient";
+import type { AuthResponse, User } from "@/types/api";
+import { privateApi, publicApi } from "./apiClient";
 import { z } from "zod";
 
-const logout = async (): Promise<void> => {
+export const signout = async (): Promise<void> => {
   publicApi.post("/auth/logout");
 };
 
@@ -11,7 +11,7 @@ export const signinInputSchema = z.object({
   password: z.string().min(5, "Required"),
 });
 export type SignInInput = z.infer<typeof signinInputSchema>;
-const signin = async (data: SignInInput): Promise<AuthResponse> => {
+export const signin = async (data: SignInInput): Promise<AuthResponse> => {
   return publicApi.post("/auth/signin", data);
 };
 
@@ -21,6 +21,12 @@ export const signupInputSchema = z.object({
   password: z.string().min(5, "Required"),
 });
 export type SignupInput = z.infer<typeof signupInputSchema>;
-const signup = async (data: SignupInput): Promise<AuthResponse> => {
+export const signup = async (data: SignupInput): Promise<AuthResponse> => {
   return publicApi.post("/auth/signup", data);
+};
+
+export const getUser = async (): Promise<User> => {
+  const resp = await privateApi.get("/account/profile");
+
+  return resp.data;
 };

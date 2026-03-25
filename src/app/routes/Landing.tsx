@@ -6,16 +6,24 @@ import CloseIC from "@/assets/close.svg?react";
 import { useState } from "react";
 import { Drawer } from "@/components/ui/drawer/drawer";
 import { Input } from "@/components/ui/input";
+import { useNavigate } from "react-router";
+import { paths } from "@/config/paths";
 
 export const Landing = () => {
   const [openDrawer, setOpenDrawer] = useState(false);
+  const navigation = useNavigate();
 
   return (
     <>
       {openDrawer && (
         <Drawer open={openDrawer} setOpen={setOpenDrawer}>
           <div className="p-4 flex items-center justify-between">
-            <H3 className="text-primary " onClick={() => {}}>
+            <H3
+              className="text-primary"
+              onClick={() => {
+                navigation(paths.landing.path);
+              }}
+            >
               Shortivo
             </H3>
             <CloseIC
@@ -26,7 +34,7 @@ export const Landing = () => {
 
           <div className="mt-24">
             <ul className="text-center flex flex-col gap-8">
-              <li className="" onClick={() => {}}>
+              <li onClick={() => {}}>
                 <H3>Features</H3>
               </li>
               <li onClick={() => {}}>
@@ -43,10 +51,18 @@ export const Landing = () => {
               <Button
                 variant={"outline"}
                 className="w-full py-5 text-md active:bg-gray-100"
+                onClick={() => {
+                  navigation(paths.auth.login.path);
+                }}
               >
                 Sign in
               </Button>
-              <Button className="w-full py-5 font-bold text-md active:bg-primary/80">
+              <Button
+                className="w-full py-5 font-bold text-md active:bg-primary/80"
+                onClick={() => {
+                  navigation(paths.auth.register.path);
+                }}
+              >
                 Sign up
               </Button>
             </div>
@@ -71,10 +87,23 @@ export const Landing = () => {
             </a>
           </div>
           <div className="hidden md:flex md:gap-2 gap-4">
-            <Button variant={"outline"} className="py-5 px-4">
+            <Button
+              variant={"outline"}
+              className="py-5 px-4"
+              onClick={() => {
+                navigation(paths.auth.login.path);
+              }}
+            >
               Sign in
             </Button>
-            <Button className="py-5 px-4 font-bold">Get Started</Button>
+            <Button
+              className="py-5 px-4 font-bold"
+              onClick={() => {
+                navigation(paths.auth.register.path);
+              }}
+            >
+              Get Started
+            </Button>
           </div>
 
           <MenuIC
