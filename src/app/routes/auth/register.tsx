@@ -1,16 +1,16 @@
-import { AuthLayout } from "@/components/layouts/AuthLayout";
-import { LoginForm } from "@/features/auth/components/LoginForm";
+import { AuthLayout } from "@/components/layouts/auth-layout";
+import { RegisterForm } from "@/features/auth/components/register-form";
 import { useNavigate, useSearchParams } from "react-router";
 
-export const LoginRoute = () => {
+export const RegisterRoute = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const redirectTo = searchParams.get("redirectTo");
 
   return (
     <>
-      <AuthLayout title="Log in | Shortivo">
-        <LoginForm
+      <AuthLayout title="Register your account | Shortivo">
+        <RegisterForm
           onSuccess={() => {}}
           navigateTo={(path: string) => {
             navigate(path);

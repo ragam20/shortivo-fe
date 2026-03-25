@@ -5,7 +5,6 @@ import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import googleICPath from "@/assets/ic_google_color.svg";
 import { useState } from "react";
-import { useNavigate } from "react-router";
 import { paths } from "@/config/paths";
 
 const schema = z.object({

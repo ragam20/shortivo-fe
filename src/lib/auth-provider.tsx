@@ -1,6 +1,6 @@
 import type React from "react";
-import { createContext, useContext, useEffect, useState } from "react";
-import { authSession } from "./authSessionManager";
+import { useContext, useEffect, useState } from "react";
+import { authSession } from "./auth-session-manager";
 import {
   signup,
   signout,
@@ -9,18 +9,10 @@ import {
   type SignInInput,
   type SignupInput,
 } from "./auth";
-import type { AuthResponse, User } from "@/types/api";
+import type { User } from "@/types/api";
 import { Navigate, useLocation } from "react-router";
 import { paths } from "@/config/paths";
-
-type AuthContextType = {
-  user: User | null;
-  login: (data: SignInInput) => Promise<AuthResponse>;
-  register: (data: SignupInput) => Promise<AuthResponse>;
-  logout: () => Promise<void>;
-};
-
-const AuthContext = createContext<AuthContextType | null>(null);
+import { AuthContext } from "./auth-context";
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);

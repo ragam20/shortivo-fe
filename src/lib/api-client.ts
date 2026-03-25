@@ -1,7 +1,7 @@
 import axios, { type InternalAxiosRequestConfig } from "axios";
 import { env } from "@/config/env";
 import { paths } from "@/config/paths";
-import { authSession } from "./authSessionManager";
+import { authSession } from "./auth-session-manager";
 import type { ApiResponse, AuthResponse } from "@/types/api";
 
 const axiosBaseConfig = {

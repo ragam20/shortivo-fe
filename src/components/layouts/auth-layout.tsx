@@ -1,5 +1,4 @@
 import type React from "react";
-import { useSearchParams } from "react-router";
 import { Head } from "../seo/head";
 import { H3 } from "../ui/typography";
 
@@ -9,9 +8,6 @@ type LayoutProps = {
 };
 
 export const AuthLayout = ({ children, title }: LayoutProps) => {
-  // const [searchParams] = useSearchParams();
-  // const redirectTo = searchParams.get("redirectTo");
-
   return (
     <>
       <Head title={title} description="Authentication Page" />

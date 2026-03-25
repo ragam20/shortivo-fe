@@ -1,5 +1,5 @@
 import type { AuthResponse, User } from "@/types/api";
-import { privateApi, publicApi } from "./apiClient";
+import { privateApi, publicApi } from "./api-client";
 import { z } from "zod";
 
 export const signout = async (): Promise<void> => {

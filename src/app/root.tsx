@@ -1,4 +1,4 @@
-import { DashboardLayout } from "@/components/layouts/DashboardLayout";
+import { DashboardLayout } from "@/components/layouts/dashboard-layout";
 import { Outlet } from "react-router";
 
 export const AppRoot = () => {

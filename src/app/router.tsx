@@ -1,12 +1,12 @@
 import { paths } from "@/config/paths";
 import { createBrowserRouter } from "react-router";
 import { RouterProvider } from "react-router/dom";
-import { Landing } from "./routes/Landing";
-import { LoginRoute } from "./routes/auth/Login";
-import { RegisterRoute } from "./routes/auth/Register";
-import { ProtectedRoute } from "@/lib/AuthProvider";
+import { Landing } from "./routes/landing";
+import { LoginRoute } from "./routes/auth/login";
+import { RegisterRoute } from "./routes/auth/register";
+import { ProtectedRoute } from "@/lib/auth-provider";
 import { AppRoot } from "./root";
-import { NotFoundRoute } from "./routes/NotFound";
+import { NotFoundRoute } from "./routes/not-found";
 
 const createAppRouter = createBrowserRouter([
   {

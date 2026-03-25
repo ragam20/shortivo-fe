@@ -3,15 +3,21 @@ import { H3, H4, P } from "@/components/ui/typography";
 import BadgeCheckIC from "@/assets/badge-check.svg?react";
 import MenuIC from "@/assets/menu.svg?react";
 import CloseIC from "@/assets/close.svg?react";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { Drawer } from "@/components/ui/drawer/drawer";
 import { Input } from "@/components/ui/input";
 import { useNavigate } from "react-router";
 import { paths } from "@/config/paths";
+import { AuthContext } from "@/lib/auth-context";
 
 export const Landing = () => {
   const [openDrawer, setOpenDrawer] = useState(false);
-  const navigation = useNavigate();
+  const navigate = useNavigate();
+
+  const auth = useContext(AuthContext);
+  if (auth?.user) {
+    navigate(paths.app.root.path);
+  }
 
   return (
     <>
@@ -21,7 +27,7 @@ export const Landing = () => {
             <H3
               className="text-primary"
               onClick={() => {
-                navigation(paths.landing.path);
+                navigate(paths.landing.path);
               }}
             >
               Shortivo
@@ -52,7 +58,7 @@ export const Landing = () => {
                 variant={"outline"}
                 className="w-full py-5 text-md active:bg-gray-100"
                 onClick={() => {
-                  navigation(paths.auth.login.path);
+                  navigate(paths.auth.login.path);
                 }}
               >
                 Sign in
@@ -60,7 +66,7 @@ export const Landing = () => {
               <Button
                 className="w-full py-5 font-bold text-md active:bg-primary/80"
                 onClick={() => {
-                  navigation(paths.auth.register.path);
+                  navigate(paths.auth.register.path);
                 }}
               >
                 Sign up
@@ -91,7 +97,7 @@ export const Landing = () => {
               variant={"outline"}
               className="py-5 px-4"
               onClick={() => {
-                navigation(paths.auth.login.path);
+                navigate(paths.auth.login.path);
               }}
             >
               Sign in
@@ -99,7 +105,7 @@ export const Landing = () => {
             <Button
               className="py-5 px-4 font-bold"
               onClick={() => {
-                navigation(paths.auth.register.path);
+                navigate(paths.auth.register.path);
               }}
             >
               Get Started
