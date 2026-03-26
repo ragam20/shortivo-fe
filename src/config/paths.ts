@@ -25,20 +25,20 @@ export const paths = {
       getHref: "/app",
     },
     home: {
-      path: "/home",
-      getHref: () => "/home",
+      path: "",
+      getHref: () => "/app",
     },
     links: {
-      path: "/links",
-      getHref: () => "/links",
+      path: "links",
+      getHref: () => "/app/links",
     },
     analytics: {
-      path: "/analytics",
-      getHref: () => "/analytics",
+      path: "analytics",
+      getHref: () => "/app/analytics",
     },
     settings: {
-      path: "/settings",
-      getHref: () => "/settings",
+      path: "settings",
+      getHref: () => "/app/settings",
     },
   },
 } as const;

@@ -105,18 +105,11 @@ export const RegisterForm = ({ onSuccess, navigateTo }: RegisterForm) => {
           return (
             <>
               <FormField label="Username" error={errors.username}>
-                <Input
-                  className="border focus-visible:ring-primary/10 outline-none p-5 w-full"
-                  {...register("username")}
-                />
+                <Input {...register("username")} />
               </FormField>
 
               <FormField label="Email" error={errors.email}>
-                <Input
-                  type="email"
-                  className="border p-5 focus-visible:ring-primary/10 w-full"
-                  {...register("email")}
-                />
+                <Input type="email" {...register("email")} />
               </FormField>
 
               <PasswordFormField
@@ -127,7 +120,6 @@ export const RegisterForm = ({ onSuccess, navigateTo }: RegisterForm) => {
               >
                 <Input
                   type={showPassword ? "text" : "password"}
-                  className="border p-5 focus-visible:ring-primary/10 outline-none w-full"
                   {...register("password")}
                   onFocus={() => setShowCheckList(true)}
                 />
