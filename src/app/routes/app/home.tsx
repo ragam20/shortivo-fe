@@ -9,7 +9,7 @@ export const HomeRoute = () => {
       <ContentLayout>
         <div>
           <div className="w-full bg-white rounded-lg px-8 py-8">
-            <div className="flex items-center justify-between">
+            <div className="md:flex md:items-center md:justify-between">
               <H4>Create a short link quickly</H4>
               <P className="text-stone-800">
                 You can create <span className="font-extrabold">5</span> more
@@ -19,9 +19,9 @@ export const HomeRoute = () => {
 
             <div className="mt-10">
               <P className="font-bold">Paste your destination URL</P>
-              <div className="flex items-center gap-4 mt-2">
+              <div className=" md:flex md:items-center gap-4 mt-2">
                 <Input placeholder="https://www.example.com" />
-                <Button className="py-5 cursor-pointer">
+                <Button className="mt-4 md:mt-0 py-5 cursor-pointer">
                   Create short link
                 </Button>
               </div>
