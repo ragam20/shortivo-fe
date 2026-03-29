@@ -84,7 +84,7 @@ export const DashboardLayout = ({ user, children }: DashboardLayoutProps) => {
             <div className="flex items-center justify-end gap-2">
               <Button
                 variant={"outline"}
-                className="rounded-sm border-2 border-primary px-3 py-2 font-bold text-primary/80 hover:bg-primary hover:text-white md:px-5 md:py-4"
+                className="cursor-pointer rounded-sm border-2 border-primary px-3 py-2 font-bold text-primary/80 hover:bg-primary hover:text-white md:px-5 md:py-4"
               >
                 UPGRADE
               </Button>
