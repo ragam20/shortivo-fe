@@ -19,7 +19,7 @@ export type AuthResponse = {
 };
 
 export type BaseEntity = {
-  id: number;
+  id: number | string;
 };
 
 export type Entity<T> = T & BaseEntity;
@@ -27,8 +27,19 @@ export type Entity<T> = T & BaseEntity;
 export type User = Entity<{
   username: string;
   email: string;
-  googleId?: number;
+  imgURL?: string | null;
+  googleId?: number | null;
 
   createdAt: string;
   updatedAt: string;
+}>;
+
+export type Link = Entity<{
+  title: string | null;
+  description: string;
+  shortUrl: string;
+  originalUrl: string;
+  expiredAt: string;
+
+  createdAt: string;
 }>;

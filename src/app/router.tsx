@@ -10,6 +10,7 @@ import { NotFoundRoute } from "./routes/not-found";
 import { HomeRoute } from "./routes/app/home";
 import { LinksRoute } from "./routes/app/links";
 import { AnalyticsRoute } from "./routes/app/analytics";
+import { Toaster } from "@/components/ui/sonner";
 
 const createAppRouter = createBrowserRouter([
   {
@@ -57,5 +58,10 @@ const createAppRouter = createBrowserRouter([
 ]);
 
 export const AppRouter = () => {
-  return <RouterProvider router={createAppRouter} />;
+  return (
+    <>
+      <RouterProvider router={createAppRouter} />;
+      <Toaster position="top-right" richColors closeButton />
+    </>
+  );
 };

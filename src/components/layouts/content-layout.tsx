@@ -4,10 +4,8 @@ type ContentLayoutProps = {
 
 export const ContentLayout = ({ children }: ContentLayoutProps) => {
   return (
-    <>
-      <div className="my-8 sm:mx-auto w-full px-4 sm:w-2xl  md:w-3xl xl:w-5xl h-screen ">
-        {children}
-      </div>
-    </>
+    <div className="my-8 mx-auto min-h-screen w-full px-4 sm:max-w-2xl md:max-w-3xl xl:max-w-5xl">
+      {children}
+    </div>
   );
 };
