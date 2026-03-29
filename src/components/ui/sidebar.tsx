@@ -2,6 +2,8 @@
 
 import PanelRightIcon from "@/assets/panel-right-open.svg?react";
 import PanelLeftIcon from "@/assets/panel-left-open.svg?react";
+import MenuIcon from "@/assets/menu.svg?react";
+import CloseIcon from "@/assets/close.svg?react";
 
 import * as React from "react";
 import { cva, type VariantProps } from "class-variance-authority";
@@ -257,8 +259,8 @@ function SidebarTrigger({
   onClick,
   ...props
 }: React.ComponentProps<typeof Button>) {
-  const { toggleSidebar } = useSidebar();
-  const [open, setOpen] = React.useState(false);
+  const { isMobile, open, openMobile, toggleSidebar } = useSidebar();
+  const isOpen = isMobile ? openMobile : open;
 
   return (
     <Button
@@ -270,11 +272,16 @@ function SidebarTrigger({
       onClick={(event) => {
         onClick?.(event);
         toggleSidebar();
-        setOpen(!open);
       }}
       {...props}
     >
-      {open ? (
+      {isMobile ? (
+        isOpen ? (
+          <CloseIcon className="size-6 text-stone-800" />
+        ) : (
+          <MenuIcon className="size-6 text-stone-800" />
+        )
+      ) : isOpen ? (
         <PanelLeftIcon className="size-6 text-stone-800" />
       ) : (
         <PanelRightIcon className="size-6 text-stone-800" />
