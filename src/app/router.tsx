@@ -11,11 +11,16 @@ import { HomeRoute } from "./routes/app/home";
 import { LinksRoute } from "./routes/app/links";
 import { AnalyticsRoute } from "./routes/app/analytics";
 import { Toaster } from "@/components/ui/sonner";
+import { PricingRoute } from "./routes/pricing";
 
 const createAppRouter = createBrowserRouter([
   {
     path: paths.landing.path,
     Component: Landing,
+  },
+  {
+    path: paths.pricing.path,
+    Component: PricingRoute,
   },
   {
     path: paths.auth.login.path,
@@ -25,6 +30,7 @@ const createAppRouter = createBrowserRouter([
     path: paths.auth.register.path,
     Component: RegisterRoute,
   },
+
   {
     path: paths.app.root.path,
     // element: (
