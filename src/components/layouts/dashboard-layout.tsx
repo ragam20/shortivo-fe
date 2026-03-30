@@ -22,7 +22,7 @@ import {
   type LucideProps,
 } from "lucide-react";
 import { Button } from "../ui/button";
-import { NavLink, useLocation } from "react-router";
+import { NavLink, useLocation, useNavigate } from "react-router";
 import type { User } from "@/types/api";
 import { UserAvatar } from "../ui/avatar/user-avatar";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -55,6 +55,8 @@ export const DashboardLayout = ({ user, children }: DashboardLayoutProps) => {
     dashboardMenus.find((m) => m.path === pathname) ?? dashboardMenus[0];
   const showHeaderTitle = isMobile || !openSidebar;
 
+  const navigate = useNavigate();
+
   return (
     <SidebarProvider
       open={openSidebar}
@@ -84,6 +86,9 @@ export const DashboardLayout = ({ user, children }: DashboardLayoutProps) => {
             <div className="flex items-center justify-end gap-2">
               <Button
                 variant={"outline"}
+                onClick={() => {
+                  navigate(paths.pricing.path);
+                }}
                 className="cursor-pointer rounded-sm border-2 border-primary px-3 py-2 font-bold text-primary/80 hover:bg-primary hover:text-white md:px-5 md:py-4"
               >
                 UPGRADE

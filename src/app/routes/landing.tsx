@@ -6,7 +6,7 @@ import CloseIC from "@/assets/close.svg?react";
 import { useContext, useState } from "react";
 import { Drawer } from "@/components/ui/drawer/drawer";
 import { Input } from "@/components/ui/input";
-import { useNavigate } from "react-router";
+import { Link, useNavigate } from "react-router";
 import { paths } from "@/config/paths";
 import { AuthContext } from "@/lib/auth-context";
 
@@ -43,7 +43,11 @@ export const Landing = () => {
               <li onClick={() => {}}>
                 <H3>Features</H3>
               </li>
-              <li onClick={() => {}}>
+              <li
+                onClick={() => {
+                  navigate(paths.pricing.path);
+                }}
+              >
                 <H3>Pricing</H3>
               </li>
               <li onClick={() => {}}>
@@ -82,15 +86,15 @@ export const Landing = () => {
             <H3 className="text-primary cursor-pointer">Shortivo</H3>
           </div>
           <div className="hidden md:flex md:gap-16 md:items-center md:mt-1 ">
-            <a className="cursor-pointer">
+            <Link className="cursor-pointer" to={""}>
               <H4 className="text-md font-medium">Features</H4>
-            </a>
-            <a className="cursor-pointer">
+            </Link>
+            <Link className="cursor-pointer" to={paths.pricing.path}>
               <H4 className="text-md font-medium">Pricing</H4>
-            </a>
-            <a className="cursor-pointer">
+            </Link>
+            <Link className="cursor-pointer" to={""}>
               <H4 className="text-md font-medium">Docs</H4>
-            </a>
+            </Link>
           </div>
           <div className="hidden md:flex md:gap-2 gap-4">
             <Button
