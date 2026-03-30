@@ -25,7 +25,7 @@ const planList = [
 export const PricingList = () => {
   return (
     <>
-      <div className="flex flex-col items-center md:flex-row justify-center gap-8">
+      <div className="flex flex-col items-center justify-center gap-8 py-8 md:flex-row">
         {planList.map((plan) => {
           const isPlusPlan = plan.title.toLowerCase() === "plus";
           const isFreePlan = plan.title.toLowerCase() === "free";
@@ -33,16 +33,18 @@ export const PricingList = () => {
           return (
             <Card
               key={plan.title}
-              className={`bg-white ${isPlusPlan ? "min-h-100 border-primary" : "min-h-87"}`}
+              className={`relative mt-12 md:mt-0 overflow-visible bg-white min-h-100 ${isPlusPlan ? "border-primary border-3 rounded-t-none shadow-xl " : "border border-gray-200 shadow-sm"}`}
             >
-              <CardContent className="w-64">
-                <div>
-                  {isPlusPlan ? (
-                    <div className="-mx-4 -mt-4 mb-4 bg-primary px-4 py-4 text-center text-sm font-semibold tracking-[0.2em] text-white">
-                      RECOMMENDED
-                    </div>
-                  ) : null}
+              {isPlusPlan && (
+                <div className="absolute w-65.5 rounded-xl rounded-b-none -top-12 left-1/2 -translate-x-1/2 bg-primary px-8 py-5 text-center text-xs font-semibold tracking-[0.2em] text-white">
+                  RECOMMENDED
+                </div>
+              )}
 
+              <CardContent
+                className={`w-64 ${isPlusPlan ? "pt-8" : "pt-6"} pb-6`}
+              >
+                <div>
                   <div className="text-center">
                     <H3 className="">{plan.title}</H3>
                     <H4 className="text-lg">
