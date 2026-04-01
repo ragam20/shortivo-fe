@@ -4,7 +4,7 @@ import { useContext } from "react";
 import { Outlet } from "react-router";
 
 export const AppRoot = () => {
-  const ctx = useContext(AuthContext);
+  // const ctx = useContext(AuthContext);
 
   return (
     <DashboardLayout

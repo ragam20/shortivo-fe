@@ -24,3 +24,25 @@ export function toDateRange(value: string): { from: Date; to: Date } {
 
   return { from, to };
 }
+
+export function formatDateMMYY(dateStr: string) {
+  const date = new Date(dateStr);
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+
+  return `${month}/${day}`;
+}
+
+export function isValidDateRange(
+  from: Date | undefined | null,
+  to: Date | undefined | null,
+): boolean {
+  if (!from || !to) {
+    return true;
+  }
+
+  const diffInMs = to.getTime() - from.getTime();
+  const diffInDays = diffInMs / (1000 * 60 * 60 * 24);
+
+  return diffInDays <= 90;
+}
