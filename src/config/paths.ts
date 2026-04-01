@@ -27,7 +27,7 @@ export const paths = {
   app: {
     root: {
       path: "/app",
-      getHref: "/app",
+      getHref: () => "/app",
     },
     home: {
       path: "",
@@ -35,15 +35,26 @@ export const paths = {
     },
     links: {
       path: "links",
-      getHref: () => "/app/links",
+      getHref: () => `${paths.app.root.getHref()}/links`,
+      edit: {
+        path: "links/:linkId/edit",
+        getHref: (linkId: string | number) =>
+          `${paths.app.root.getHref()}/links/${linkId}/edit`,
+      },
     },
     analytics: {
       path: "analytics",
-      getHref: () => "/app/analytics",
+      getHref: () => `${paths.app.root.getHref()}/analytics`,
+
+      dashboard: {
+        path: "analytics/dashboard",
+        getHref: () => `${paths.app.root.getHref()}/analytics/dashboard`,
+      },
     },
+
     settings: {
       path: "settings",
-      getHref: () => "/app/settings",
+      getHref: () => `${paths.app.root.getHref()}/settings`,
     },
   },
 } as const;

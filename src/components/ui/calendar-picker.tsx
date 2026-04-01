@@ -5,12 +5,17 @@ import { Dialog, DialogContent, DialogTrigger } from "./dialog";
 import { H4 } from "./typography";
 import { Calendar } from "./calendar";
 import { Input } from "./input";
-import { formatDateToString, toDateRange } from "@/utils/date-util";
+import {
+  formatDateToString,
+  isValidDateRange,
+  toDateRange,
+} from "@/utils/date-util";
 import type { DateRange } from "react-day-picker";
 import { toast } from "sonner";
 
 type CalendarPickerProps = {
   onDateChange: (date: DateRange | undefined) => void;
+  title: string;
 };
 
 const dateFilter = [
@@ -22,7 +27,10 @@ const dateFilter = [
   { title: "Last 90 days", value: "90d" },
 ];
 
-export const CalendarPicker = ({ onDateChange }: CalendarPickerProps) => {
+export const CalendarPicker = ({
+  onDateChange,
+  title,
+}: CalendarPickerProps) => {
   const [dateRange, setDateRange] = React.useState<DateRange | undefined>({
     from: new Date(
       new Date().getFullYear(),
@@ -48,12 +56,12 @@ export const CalendarPicker = ({ onDateChange }: CalendarPickerProps) => {
         <DialogTrigger asChild>
           <Button variant={"outline"} className="relative cursor-pointer py-5">
             <CalendarIcon className="absolute left-4" />
-            <p className="pl-8">Filter by created date</p>
+            <p className="pl-8">{title}</p>
           </Button>
         </DialogTrigger>
         <DialogContent showCloseButton={false} className="w-2xl">
           <div className="flex justify-between">
-            <H4>Filter by created date</H4>
+            <H4>{title}</H4>
             <CloseIcon
               className="cursor-pointer"
               onClick={() => {
@@ -108,6 +116,11 @@ export const CalendarPicker = ({ onDateChange }: CalendarPickerProps) => {
               onClick={() => {
                 if (!dateRange) {
                   toast.warning("Please choose a date first");
+                  return;
+                }
+
+                if (!isValidDateRange(dateRange.from!, dateRange.to!)) {
+                  toast.warning("max 90 days");
                   return;
                 }
 

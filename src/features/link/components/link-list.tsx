@@ -1,14 +1,14 @@
 import { Button } from "@/components/ui/button";
 import { AppPagination } from "@/components/ui/pagination/app-pagination";
 import type { Link } from "@/types/api";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
   Link as LinkIcon,
   Ellipsis as EllipsisIcon,
   Pencil as PencilIcon,
   Eye as EyeIcon,
   Trash2 as Trash2Icon,
-  Trash2,
+  ChartColumn as ChartColumnIcon,
 } from "lucide-react";
 import { H4 } from "@/components/ui/typography";
 import { CopyAbleLinkText } from "@/components/ui/text/copyable-link-text";
@@ -16,74 +16,41 @@ import {
   MenuPopover,
   type MenuItem,
 } from "@/components/ui/popover/popover-menu";
-
-const dummyLinks: Link[] = [
-  {
-    id: 1,
-    title: "Github",
-    shortUrl: "shortivo.com/acXhsd",
-    originalUrl: "https://www.github.com/Agam33",
-    description: "This is My Github",
-    expiredAt: "",
-    createdAt: "",
-  },
-  {
-    id: 2,
-    title: "Google",
-    shortUrl: "shortivo.com/acXhsd",
-    originalUrl: "https://www.google.com/",
-    description: "Google search",
-    expiredAt: "",
-    createdAt: "",
-  },
-  {
-    id: 3,
-    title: "Github",
-    shortUrl: "shortivo.com/acXhsd",
-    originalUrl: "www.github.com/Agam33",
-    description: "This is My Github",
-    expiredAt: "",
-    createdAt: "",
-  },
-  {
-    id: 4,
-    title: "Github",
-    shortUrl: "shortivo.com/acXhsd",
-    originalUrl: "https://www.github.com/Agam33",
-    description: "This is My Github",
-    expiredAt: "",
-    createdAt: "",
-  },
-  {
-    id: 5,
-    title: "Github",
-    shortUrl: "shortivo.com/acXhsd",
-    originalUrl: "https://www.github.com/Agam33",
-    description: "This is My Github",
-    expiredAt: "",
-    createdAt: "",
-  },
-];
+import { useNavigate } from "react-router";
+import { paths } from "@/config/paths";
+import { mockLinks } from "@/features/link/data/mock-links";
+import { ViewLinkDetailDialog } from "@/features/link/components/view-link-detail-dialog";
 
 export const LinkList = () => {
-  const [openMenu, setOpenMenu] = useState(false);
-
   const [page, setPage] = useState(1);
-  const [limit, setLimit] = useState(5);
-  const [totalPages, setTotalPages] = useState(1);
+  const links = mockLinks;
+  const navigate = useNavigate();
+  const [selectedLink, setSelectedLink] = useState<Link | null>(null);
+  const [openDetailDialog, setOpenDetailDialog] = useState(false);
+  const totalPages = Math.max(1, Math.ceil(links.length / 5));
 
-  const [links, setLinks] = useState<Link[]>([]);
-
-  const cardMenuItems: MenuItem[] = [
+  const getCardMenuItems = (link: Link): MenuItem[] => [
+    {
+      label: "Analytics",
+      icon: ChartColumnIcon,
+      onClick() {
+        navigate(paths.app.analytics.dashboard.getHref());
+      },
+    },
     {
       label: "Edit link",
       icon: PencilIcon,
-      onClick: () => {},
+      onClick: () => {
+        navigate(paths.app.links.edit.getHref(link.id));
+      },
     },
     {
       label: "View detail",
       icon: EyeIcon,
-      onClick: () => {},
+      onClick: () => {
+        setSelectedLink(link);
+        setOpenDetailDialog(true);
+      },
     },
     {
       label: "Delete",
@@ -91,14 +58,6 @@ export const LinkList = () => {
       onClick: () => {},
     },
   ];
-
-  useEffect(() => {
-    const initLinks = () => {
-      setLinks(dummyLinks);
-    };
-
-    initLinks();
-  }, []);
 
   return (
     <>
@@ -122,15 +81,11 @@ export const LinkList = () => {
                     <LinkIcon />
                   </Button>
 
-                  <Button
-                    className="cursor-pointer block xl:hidden"
-                    variant={"ghost"}
-                    onClick={() => {
-                      setOpenMenu(true);
-                    }}
-                  >
-                    <EllipsisIcon className="size-4" />
-                  </Button>
+                  <MenuPopover items={getCardMenuItems(link)}>
+                    <Button className="cursor-pointer block xl:hidden" variant={"ghost"}>
+                      <EllipsisIcon className="size-4" />
+                    </Button>
+                  </MenuPopover>
                 </div>
 
                 <div className="flex-1 min-w-0">
@@ -151,14 +106,8 @@ export const LinkList = () => {
                   </div>
                 </div>
 
-                <MenuPopover items={cardMenuItems}>
-                  <Button
-                    className="cursor-pointer hidden xl:block"
-                    variant={"ghost"}
-                    onClick={() => {
-                      setOpenMenu(true);
-                    }}
-                  >
+                <MenuPopover items={getCardMenuItems(link)}>
+                  <Button className="cursor-pointer hidden xl:block" variant={"ghost"}>
                     <EllipsisIcon className="size-4" />
                   </Button>
                 </MenuPopover>
@@ -174,6 +123,18 @@ export const LinkList = () => {
           totalPages={totalPages}
         />
       </div>
+
+      <ViewLinkDetailDialog
+        link={selectedLink}
+        open={openDetailDialog}
+        onOpenChange={(open) => {
+          setOpenDetailDialog(open);
+
+          if (!open) {
+            setSelectedLink(null);
+          }
+        }}
+      />
     </>
   );
 };
