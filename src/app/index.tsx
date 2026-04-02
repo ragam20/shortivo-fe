@@ -1,5 +1,12 @@
+import { AuthProvider } from "@/lib/auth-provider";
 import { AppRouter } from "./router";
 
 export const App = () => {
-  return <AppRouter />;
+  return (
+    <>
+      <AuthProvider>
+        <AppRouter />
+      </AuthProvider>
+    </>
+  );
 };

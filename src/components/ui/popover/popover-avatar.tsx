@@ -6,10 +6,15 @@ import { LogOut as LogoutIcon } from "lucide-react";
 
 type AvatarPopOverProps = {
   user: User;
+  logout: () => void;
   children: React.ReactNode;
 };
 
-export const AvatarPopOver = ({ user, children }: AvatarPopOverProps) => {
+export const AvatarPopOver = ({
+  user,
+  children,
+  logout,
+}: AvatarPopOverProps) => {
   return (
     <Popover>
       <PopoverTrigger>{children}</PopoverTrigger>
@@ -31,7 +36,12 @@ export const AvatarPopOver = ({ user, children }: AvatarPopOverProps) => {
           </div>
           <Separator className="my-4" />
           <div className="px-2 pb-4">
-            <div className="cursor-pointer flex items-center gap-1 justify-end w-full">
+            <div
+              onClick={() => {
+                logout();
+              }}
+              className="cursor-pointer flex items-center gap-1 justify-end w-full"
+            >
               <LogoutIcon className="size-4" />
               <p>Sign out</p>
             </div>

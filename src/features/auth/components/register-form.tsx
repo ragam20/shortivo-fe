@@ -4,8 +4,9 @@ import { Input } from "@/components/ui/input";
 import { H3, P } from "@/components/ui/typography";
 import { z } from "zod";
 import googleICPath from "@/assets/ic_google_color.svg";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { paths } from "@/config/paths";
+import { AuthContext } from "@/lib/auth-context";
 
 const passwordRules = [
   {
@@ -61,9 +62,23 @@ type RegisterForm = {
 export const RegisterForm = ({ onSuccess, navigateTo }: RegisterForm) => {
   const [showPassword, setShowPassword] = useState(false);
   const [showCheckList, setShowCheckList] = useState(false);
+  const [errMessage, setErrMessage] = useState<string | null>(null);
+  const ctx = useContext(AuthContext);
 
-  const onSubmit = (data: RegisterFormValues) => {
-    console.log(data);
+  const onSubmit = async (data: RegisterFormValues) => {
+    if (!ctx) {
+      setErrMessage("Authentication is not available.");
+      return;
+    }
+
+    setErrMessage(null);
+
+    try {
+      await ctx.register(data);
+      onSuccess();
+    } catch (err: any) {
+      setErrMessage(err.message);
+    }
   };
 
   return (
@@ -86,7 +101,11 @@ export const RegisterForm = ({ onSuccess, navigateTo }: RegisterForm) => {
       </div>
 
       <div className="my-10">
-        <Button variant={"outline"} className="border w-full py-5 flex gap-1">
+        <Button
+          variant={"outline"}
+          className="border w-full py-5 flex gap-1"
+          disabled={ctx?.isAuthActionLoading}
+        >
           <img src={googleICPath} className="size-4" />
           Google
         </Button>
@@ -96,6 +115,8 @@ export const RegisterForm = ({ onSuccess, navigateTo }: RegisterForm) => {
           <div className="flex-1 border-t-2 border-muted" />
         </div>
       </div>
+
+      {errMessage && <p className="text-red-500 mb-6">{errMessage}</p>}
 
       <Form id="register-form" schema={schema} onSubmit={onSubmit}>
         {({ register, errors, watch, state }) => {
@@ -147,7 +168,12 @@ export const RegisterForm = ({ onSuccess, navigateTo }: RegisterForm) => {
           );
         }}
       </Form>
-      <Button type="submit" form="register-form" className="my-4 w-full py-5">
+      <Button
+        type="submit"
+        form="register-form"
+        className="my-4 w-full py-5"
+        disabled={ctx?.isAuthActionLoading}
+      >
         Create account
       </Button>
     </div>

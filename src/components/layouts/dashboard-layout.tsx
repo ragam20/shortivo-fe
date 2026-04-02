@@ -12,7 +12,7 @@ import {
 } from "../ui/sidebar";
 import { H3 } from "../ui/typography";
 import { Head } from "../seo/head";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { paths } from "@/config/paths";
 import {
   ChartLine,
@@ -23,10 +23,10 @@ import {
 } from "lucide-react";
 import { Button } from "../ui/button";
 import { NavLink, useLocation, useNavigate } from "react-router";
-import type { User } from "@/types/api";
 import { UserAvatar } from "../ui/avatar/user-avatar";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { AvatarPopOver } from "../ui/popover/popover-avatar";
+import { AuthContext } from "@/lib/auth-context";
 
 type DashboardMenu = {
   title: string;
@@ -49,11 +49,10 @@ const dashboardMenus: DashboardMenu[] = [
 ];
 
 type DashboardLayoutProps = {
-  user: User;
   children: React.ReactNode;
 };
 
-export const DashboardLayout = ({ user, children }: DashboardLayoutProps) => {
+export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   const [openSidebar, setOpenSidebar] = useState(true);
   const { pathname } = useLocation();
   const isMobile = useIsMobile();
@@ -64,6 +63,12 @@ export const DashboardLayout = ({ user, children }: DashboardLayoutProps) => {
   const showHeaderTitle = isMobile || !openSidebar;
 
   const navigate = useNavigate();
+  const ctx = useContext(AuthContext);
+  const user = ctx?.user;
+
+  if (!ctx || !user) {
+    return null;
+  }
 
   return (
     <div className="min-h-screen bg-primary/10 overflow-hidden">
@@ -111,7 +116,12 @@ export const DashboardLayout = ({ user, children }: DashboardLayoutProps) => {
                   <Mail className="size-5 text-stone-500" />
                 </Button>
 
-                <AvatarPopOver user={user}>
+                <AvatarPopOver
+                  user={user}
+                  logout={() => {
+                    ctx.logout();
+                  }}
+                >
                   <UserAvatar user={user} className="cursor-pointer" />
                 </AvatarPopOver>
               </div>

@@ -1,22 +1,44 @@
 import { Button } from "@/components/ui/button";
+import { AuthLoadingOverlay } from "@/components/ui/auth-loading-overlay";
 import { H3, H4, P } from "@/components/ui/typography";
 import BadgeCheckIC from "@/assets/badge-check.svg?react";
 import MenuIC from "@/assets/menu.svg?react";
 import CloseIC from "@/assets/close.svg?react";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Drawer } from "@/components/ui/drawer/drawer";
 import { Input } from "@/components/ui/input";
 import { Link, useNavigate } from "react-router";
 import { paths } from "@/config/paths";
 import { AuthContext } from "@/lib/auth-context";
 
+const landingRedirectDelayMs = 2000;
+
 export const Landing = () => {
   const [openDrawer, setOpenDrawer] = useState(false);
+  const [isRedirecting, setIsRedirecting] = useState(false);
   const navigate = useNavigate();
 
   const auth = useContext(AuthContext);
-  if (auth?.user) {
-    navigate(paths.app.root.path);
+
+  useEffect(() => {
+    if (auth?.isLoading || !auth?.user) {
+      setIsRedirecting(false);
+      return;
+    }
+
+    setIsRedirecting(true);
+
+    const timeoutId = window.setTimeout(() => {
+      navigate(paths.app.root.path, { replace: true });
+    }, landingRedirectDelayMs);
+
+    return () => {
+      window.clearTimeout(timeoutId);
+    };
+  }, [auth?.isLoading, auth?.user, navigate]);
+
+  if (isRedirecting) {
+    return <AuthLoadingOverlay label="Opening Dashboard" />;
   }
 
   return (

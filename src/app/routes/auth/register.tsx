@@ -1,4 +1,5 @@
 import { AuthLayout } from "@/components/layouts/auth-layout";
+import { paths } from "@/config/paths";
 import { RegisterForm } from "@/features/auth/components/register-form";
 import { useNavigate, useSearchParams } from "react-router";
 
@@ -11,7 +12,9 @@ export const RegisterRoute = () => {
     <>
       <AuthLayout title="Register your account | Shortivo">
         <RegisterForm
-          onSuccess={() => {}}
+          onSuccess={() => {
+            navigate(redirectTo || paths.app.root.path, { replace: true });
+          }}
           navigateTo={(path: string) => {
             navigate(path);
           }}
