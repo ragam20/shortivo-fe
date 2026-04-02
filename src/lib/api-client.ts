@@ -2,7 +2,7 @@ import axios, { type InternalAxiosRequestConfig } from "axios";
 import { env } from "@/config/env";
 import { paths } from "@/config/paths";
 import { authSession } from "./auth-session-manager";
-import type { ApiResponse, AuthResponse } from "@/types/api";
+import { ApiError, type ApiResponse, type AuthResponse } from "@/types/api";
 
 const axiosBaseConfig = {
   baseURL: env.API_URL,
@@ -27,14 +27,31 @@ privateApi.interceptors.request.use((config: InternalAxiosRequestConfig) => {
   return config;
 });
 
+publicApi.interceptors.response.use(
+  function onFullfilled(response) {
+    return response.data;
+  },
+
+  function onRejected(error) {
+    const status = error.response?.status;
+    const message = error.response?.data?.message || "";
+
+    return Promise.reject(new ApiError(message, status));
+  },
+);
+
 let isRefreshing = false;
 let refreshPromise: Promise<string> | null = null;
 
 privateApi.interceptors.response.use(
   function onFullfilled(response) {
-    return response;
+    return response.data;
   },
   async function onRejected(error) {
+    const status = error.response?.status;
+    const message =
+      error.response?.data?.message || error.message || "Something went wrong";
+
     const originalRequest = error.config as
       | (InternalAxiosRequestConfig & { _retry?: boolean })
       | undefined;
@@ -51,9 +68,11 @@ privateApi.interceptors.response.use(
           isRefreshing = true;
 
           refreshPromise = publicApi
-            .post<ApiResponse<AuthResponse>>("/auth/refresh-token")
+            .post<ApiResponse<AuthResponse>, ApiResponse<AuthResponse>>(
+              "/auth/refresh-token",
+            )
             .then((res) => {
-              const newToken = res.data.data.accessToken;
+              const newToken = res.data.accessToken;
               authSession.setAccessToken(newToken);
               return newToken;
             })
@@ -68,22 +87,21 @@ privateApi.interceptors.response.use(
         originalRequest.headers["Authorization"] = `Bearer ${newToken}`;
 
         return privateApi(originalRequest);
-      } catch (err) {
+      } catch {
         authSession.clearAccessToken();
 
         const searchParams = new URLSearchParams(window.location.search);
         const redirectTo =
           searchParams.get("redirectTo") || window.location.pathname;
-        window.location.href = paths.auth.login.getHref(redirectTo);
 
         if (!window.location.pathname.startsWith(paths.auth.login.path)) {
           window.location.href = paths.auth.login.getHref(redirectTo);
         }
 
-        return Promise.reject(err);
+        return Promise.reject(new ApiError(message, status));
       }
     }
 
-    return Promise.reject(error);
+    return Promise.reject(new ApiError(message, status));
   },
 );

@@ -4,8 +4,9 @@ import { H3, P } from "@/components/ui/typography";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import googleICPath from "@/assets/ic_google_color.svg";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { paths } from "@/config/paths";
+import { AuthContext } from "@/lib/auth-context";
 
 const schema = z.object({
   email: z.string().nonempty("Email is required").email("Invalid email"),
@@ -21,9 +22,22 @@ type LoginForm = {
 
 export const LoginForm = ({ onSuccess, navigateTo }: LoginForm) => {
   const [showPassword, setShowPassword] = useState(false);
+  const [errMessage, setErrMessage] = useState<string | null>(null);
+  const ctx = useContext(AuthContext);
 
-  const onSubmit = (data: LoginFormValues) => {
-    console.log(data);
+  const onSubmit = async (data: LoginFormValues) => {
+    if (!ctx) {
+      setErrMessage("Authentication is not available.");
+      return;
+    }
+
+    setErrMessage(null);
+    try {
+      await ctx.login(data);
+      onSuccess();
+    } catch (err: any) {
+      setErrMessage(err.message);
+    }
   };
 
   return (
@@ -41,13 +55,17 @@ export const LoginForm = ({ onSuccess, navigateTo }: LoginForm) => {
                 navigateTo(paths.auth.register.path);
               }}
             >
-              signup
+              Sign up
             </span>
           </P>
         </div>
 
         <div className="my-10">
-          <Button variant={"outline"} className="border w-full py-5 flex gap-1">
+          <Button
+            variant={"outline"}
+            className="border w-full py-5 flex gap-1"
+            disabled={ctx?.isAuthActionLoading}
+          >
             <img src={googleICPath} className="size-4" />
             Google
           </Button>
@@ -59,6 +77,8 @@ export const LoginForm = ({ onSuccess, navigateTo }: LoginForm) => {
             <div className="flex-1 border-t-2 border-muted" />
           </div>
         </div>
+
+        {errMessage && <p className="text-red-500 my-9 ">{errMessage}</p>}
 
         <Form
           id="login-form"
@@ -94,7 +114,8 @@ export const LoginForm = ({ onSuccess, navigateTo }: LoginForm) => {
         <Button
           type="submit"
           form="login-form"
-          className="my-4 w-full py- classNamemy-4 w-full py-5"
+          className="my-4 w-full py-5"
+          disabled={ctx?.isAuthActionLoading}
         >
           Sign In
         </Button>

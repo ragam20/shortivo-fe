@@ -3,7 +3,7 @@ import { privateApi, publicApi } from "./api-client";
 import { z } from "zod";
 
 export const signout = async (): Promise<void> => {
-  publicApi.post("/auth/logout");
+  await privateApi.post("/auth/logout");
 };
 
 export const signinInputSchema = z.object({
@@ -12,7 +12,8 @@ export const signinInputSchema = z.object({
 });
 export type SignInInput = z.infer<typeof signinInputSchema>;
 export const signin = async (data: SignInInput): Promise<AuthResponse> => {
-  return publicApi.post("/auth/signin", data);
+  const resp = await publicApi.post("/auth/signin", data);
+  return resp.data;
 };
 
 export const signupInputSchema = z.object({
@@ -22,11 +23,16 @@ export const signupInputSchema = z.object({
 });
 export type SignupInput = z.infer<typeof signupInputSchema>;
 export const signup = async (data: SignupInput): Promise<AuthResponse> => {
-  return publicApi.post("/auth/signup", data);
+  const resp = await publicApi.post("/auth/signup", data);
+  return resp.data;
 };
 
 export const getUser = async (): Promise<User> => {
-  const resp = await privateApi.get("/account/profile");
+  const resp = await privateApi.get("/accounts/profile");
+  return resp.data;
+};
 
+export const getRefreshToken = async (): Promise<AuthResponse> => {
+  const resp = await publicApi.post("/auth/refresh-token");
   return resp.data;
 };

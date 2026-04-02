@@ -4,6 +4,8 @@ import type { SignInInput, SignupInput } from "./auth";
 
 type AuthContextType = {
   user: User | null;
+  isLoading: boolean;
+  isAuthActionLoading: boolean;
   login: (data: SignInInput) => Promise<AuthResponse>;
   register: (data: SignupInput) => Promise<AuthResponse>;
   logout: () => Promise<void>;

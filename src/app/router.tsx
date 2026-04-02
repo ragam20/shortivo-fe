@@ -14,6 +14,7 @@ import { PricingRoute } from "./routes/pricing";
 import { DashboardAnalyticsRoute } from "./routes/app/dashboard-analytics";
 import { EditLinkRoute } from "./routes/app/edit-link";
 import { RouteErrorBoundary } from "./route-error-boundary";
+import { ProtectedRoute } from "@/lib/auth-provider";
 
 const createAppRouter = createBrowserRouter([
   {
@@ -39,13 +40,13 @@ const createAppRouter = createBrowserRouter([
 
   {
     path: paths.app.root.path,
-    // element: (
-    //   <ProtectedRoute>
-    //     <AppRoot />
-    //   </ProtectedRoute>
-    // ),
+    element: (
+      <ProtectedRoute>
+        <AppRoot />
+      </ProtectedRoute>
+    ),
 
-    element: <AppRoot />,
+    // element: <AppRoot />,
     ErrorBoundary: RouteErrorBoundary,
 
     children: [
