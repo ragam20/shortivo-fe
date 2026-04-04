@@ -1,20 +1,25 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { H3, H4 } from "@/components/ui/typography";
+import { paths } from "@/config/paths";
+import { AuthContext } from "@/lib/auth-context";
+import { cn } from "@/lib/utils";
 import { CircleCheck as CircleCheckIcon } from "lucide-react";
+import { useContext } from "react";
+import { useNavigate } from "react-router";
 
 const planList = [
   {
     title: "Free",
     price: 0,
-    linkLimit: 5,
+    linkLimit: 3,
     analyticsEnabled: false,
     linkActiveDuration: 604800000,
     benefits: ["7 days active link"],
   },
   {
     title: "Plus",
-    price: 5,
+    price: 6,
     linkLimit: 100,
     analyticsEnabled: true,
     linkActiveDuration: 2592000000,
@@ -23,12 +28,25 @@ const planList = [
 ];
 
 export const PricingList = () => {
+  const ctx = useContext(AuthContext);
+  const currentPlanTitle = ctx?.account?.plan?.title?.toLowerCase();
+
+  const navigate = useNavigate();
+
   return (
     <>
       <div className="flex flex-col items-center justify-center gap-8 py-8 md:flex-row">
         {planList.map((plan) => {
           const isPlusPlan = plan.title.toLowerCase() === "plus";
           const isFreePlan = plan.title.toLowerCase() === "free";
+          const normalizedPlanTitle = plan.title.toLowerCase();
+
+          const isCurrentPlan = currentPlanTitle === normalizedPlanTitle;
+          const btnText = isCurrentPlan
+            ? "Current Plan"
+            : isFreePlan
+              ? "Get started"
+              : `Upgrade to ${plan.title}`;
 
           return (
             <Card
@@ -63,10 +81,23 @@ export const PricingList = () => {
                   </div>
 
                   <Button
+                    onClick={() => {
+                      if (isFreePlan && !ctx?.account) {
+                        navigate(paths.auth.login.path);
+                      }
+                    }}
+                    disabled={isCurrentPlan}
                     variant={isPlusPlan ? "default" : "outline"}
-                    className={`w-full ${isPlusPlan ? "bg-primary text-white hover:bg-primary/90" : "border-primary/80 hover:bg-primary/10"}`}
+                    className={cn(
+                      "w-full",
+                      isCurrentPlan
+                        ? "cursor-not-allowed border-gray-400 bg-gray-400 text-white hover:bg-gray-400 disabled:opacity-100"
+                        : !isFreePlan
+                          ? "bg-primary text-white hover:bg-primary/90"
+                          : "border-primary/80 hover:bg-primary/10",
+                    )}
                   >
-                    {!isFreePlan ? `Upgrade to ${plan.title}` : "Get started"}
+                    {btnText}
                   </Button>
 
                   <ul className="mt-8">
