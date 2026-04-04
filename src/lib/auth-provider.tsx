@@ -4,13 +4,13 @@ import { authSession } from "./auth-session-manager";
 import {
   signup,
   signout,
-  getUser,
+  getAccount,
   signin,
   type SignInInput,
   type SignupInput,
   getRefreshToken,
 } from "./auth";
-import type { User } from "@/types/api";
+import type { Account } from "@/types/api";
 import { Navigate, useLocation } from "react-router";
 import { paths } from "@/config/paths";
 import { AuthContext } from "./auth-context";
@@ -25,26 +25,27 @@ const wait = (ms: number) =>
   });
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-  const [user, setUser] = useState<User | null>(null);
+  const [account, setAccount] = useState<Account | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [authAction, setAuthAction] = useState<AuthAction>("idle");
 
   const login = async (data: SignInInput) => {
-    setAuthAction("signin");
-
     try {
       const resp = await signin(data);
 
       authSession.setAccessToken(resp.accessToken);
 
-      const user = await getUser();
-      setUser(user);
+      const account = await getAccount();
+      setAccount(account);
+
+      setAuthAction("signin");
+
       await wait(signInDelayMs);
 
       return resp;
     } catch (err) {
       authSession?.clearAccessToken();
-      setUser(null);
+      setAccount(null);
 
       throw err;
     } finally {
@@ -53,20 +54,20 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   const register = async (data: SignupInput) => {
-    setAuthAction("register");
-
     try {
       const resp = await signup(data);
 
       authSession.setAccessToken(resp.accessToken);
 
-      const user = await getUser();
-      setUser(user);
+      const account = await getAccount();
+      setAccount(account);
+
+      setAuthAction("register");
 
       return resp;
     } catch (err) {
       authSession.clearAccessToken();
-      setUser(null);
+      setAccount(null);
 
       throw err;
     } finally {
@@ -81,7 +82,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       await signout();
     } finally {
       authSession.clearAccessToken();
-      setUser(null);
+      setAccount(null);
       setAuthAction("idle");
     }
   };
@@ -92,11 +93,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         const resp = await getRefreshToken();
         authSession.setAccessToken(resp.accessToken);
 
-        const user = await getUser();
-        setUser(user);
+        const account = await getAccount();
+        setAccount(account);
       } catch {
         authSession.clearAccessToken();
-        setUser(null);
+        setAccount(null);
       } finally {
         setIsLoading(false);
       }
@@ -118,7 +119,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   return (
     <AuthContext.Provider
       value={{
-        user,
+        account,
         isLoading,
         isAuthActionLoading,
         login,
@@ -140,7 +141,7 @@ export const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
     return null;
   }
 
-  if (!auth?.user) {
+  if (!auth?.account) {
     return (
       <Navigate to={paths.auth.login.getHref(location.pathname)} replace />
     );

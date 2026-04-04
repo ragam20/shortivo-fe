@@ -64,9 +64,9 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
 
   const navigate = useNavigate();
   const ctx = useContext(AuthContext);
-  const user = ctx?.user;
+  const account = ctx?.account;
 
-  if (!ctx || !user) {
+  if (!ctx || !account) {
     return null;
   }
 
@@ -105,7 +105,7 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
                   }}
                   className="cursor-pointer rounded-sm border-2 border-primary px-3 py-2 font-bold text-primary/80 hover:bg-primary hover:text-white md:px-5 md:py-4"
                 >
-                  UPGRADE
+                  {account.plan ? account.plan.title : "UPGRADE"}
                 </Button>
 
                 <Button
@@ -117,12 +117,12 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
                 </Button>
 
                 <AvatarPopOver
-                  user={user}
+                  account={account}
                   logout={() => {
                     ctx.logout();
                   }}
                 >
-                  <UserAvatar user={user} className="cursor-pointer" />
+                  <UserAvatar user={account.user} className="cursor-pointer" />
                 </AvatarPopOver>
               </div>
             </div>

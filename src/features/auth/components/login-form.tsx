@@ -65,6 +65,7 @@ export const LoginForm = ({ onSuccess, navigateTo }: LoginForm) => {
             variant={"outline"}
             className="border w-full py-5 flex gap-1"
             disabled={ctx?.isAuthActionLoading}
+            onClick={() => {}}
           >
             <img src={googleICPath} className="size-4" />
             Google

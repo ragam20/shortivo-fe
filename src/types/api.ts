@@ -1,3 +1,5 @@
+import type { ISOStringFormat } from "date-fns";
+
 export class ApiError extends Error {
   status?: number;
 
@@ -39,9 +41,22 @@ export type User = Entity<{
   imgURL?: string | null;
   googleId?: number | null;
 
-  createdAt: string;
-  updatedAt: string;
+  createdAt: ISOStringFormat;
+  updatedAt: ISOStringFormat;
 }>;
+
+export type Plan = Entity<{
+  code: string;
+  title: string;
+  monthlyLimit: number;
+  analyticsEnabled: boolean;
+  customDomainEnabled: boolean;
+}>;
+
+export type Account = {
+  user: User;
+  plan: Plan | null;
+};
 
 export type Link = Entity<{
   title: string | null;
