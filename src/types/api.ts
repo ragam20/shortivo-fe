@@ -67,3 +67,8 @@ export type Link = Entity<{
 
   createdAt: string;
 }>;
+
+export type MonthLimit = {
+  monthlyLimit: number;
+  currLimit: number;
+};
