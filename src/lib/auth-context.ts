@@ -1,9 +1,9 @@
-import type { AuthResponse, User } from "@/types/api";
+import type { AuthResponse, Account } from "@/types/api";
 import { createContext } from "react";
 import type { SignInInput, SignupInput } from "./auth";
 
 type AuthContextType = {
-  user: User | null;
+  account: Account | null;
   isLoading: boolean;
   isAuthActionLoading: boolean;
   login: (data: SignInInput) => Promise<AuthResponse>;

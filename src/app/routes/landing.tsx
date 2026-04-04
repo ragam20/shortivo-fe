@@ -21,7 +21,11 @@ export const Landing = () => {
   const auth = useContext(AuthContext);
 
   useEffect(() => {
-    if (auth?.isLoading || !auth?.user) {
+    if (auth?.isLoading) {
+      return;
+    }
+
+    if (!auth?.account) {
       setIsRedirecting(false);
       return;
     }
@@ -35,7 +39,7 @@ export const Landing = () => {
     return () => {
       window.clearTimeout(timeoutId);
     };
-  }, [auth?.isLoading, auth?.user, navigate]);
+  }, [auth?.isLoading, auth?.account, navigate]);
 
   if (isRedirecting) {
     return <AuthLoadingOverlay label="Opening Dashboard" />;
@@ -189,7 +193,12 @@ export const Landing = () => {
                 className="w-full focus-visible:ring-primary/10 border-primary py-5 mt-4"
                 placeholder="https://www.example.com"
               />
-              <Button className="mt-4 px-6 py-5 after:content-['→']">
+              <Button
+                onClick={() => {
+                  navigate(paths.auth.login.path);
+                }}
+                className="mt-4 px-6 py-5 after:content-['→']"
+              >
                 Get your free link
               </Button>
             </div>

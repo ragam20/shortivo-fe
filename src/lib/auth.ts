@@ -1,4 +1,4 @@
-import type { AuthResponse, User } from "@/types/api";
+import type { Account, AuthResponse } from "@/types/api";
 import { privateApi, publicApi } from "./api-client";
 import { z } from "zod";
 
@@ -27,8 +27,8 @@ export const signup = async (data: SignupInput): Promise<AuthResponse> => {
   return resp.data;
 };
 
-export const getUser = async (): Promise<User> => {
-  const resp = await privateApi.get("/accounts/profile");
+export const getAccount = async (): Promise<Account> => {
+  const resp = await privateApi.get("/users/account");
   return resp.data;
 };
 
