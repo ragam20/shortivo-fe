@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
+import { Form, FormField } from "@/components/ui/form/form";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import {
   Popover,
   PopoverContent,
@@ -10,15 +10,42 @@ import {
 } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
+import {
+  createLink,
+  createLinkInputSchema,
+  type createLinkInput,
+} from "../api/create-link";
+import { toast } from "sonner";
+import { getDomainName } from "@/utils/url-util";
 
 type CreateLinkPopoverProps = {
   children: React.ReactNode;
+  onSuccess: () => void | Promise<void>;
 };
 
 export const CreateLinkPopover = ({
   children: popoverTrigger,
+  onSuccess,
 }: CreateLinkPopoverProps) => {
   const [open, setOpen] = useState(false);
+
+  const onSubmit = async (data: createLinkInput) => {
+    try {
+      const payload = {
+        ...data,
+        title: data.title || getDomainName(data.url),
+      };
+
+      const resp = await createLink(payload);
+      await onSuccess();
+
+      toast.info(resp.message);
+
+      setOpen(false);
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Failed to create link");
+    }
+  };
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -30,48 +57,57 @@ export const CreateLinkPopover = ({
           </PopoverTitle>
         </PopoverHeader>
 
-        <form
-          className="flex flex-col gap-4"
-          onSubmit={(event) => {
-            event.preventDefault();
-            setOpen(false);
-          }}
+        <Form
+          id="create-link-input"
+          className="my-4"
+          schema={createLinkInputSchema}
+          onSubmit={onSubmit}
         >
-          <div className="flex flex-col gap-2">
-            <Label htmlFor="create-link-title">title</Label>
-            <Input id="create-link-title" placeholder="My awesome link" />
-          </div>
+          {({ register, errors }) => (
+            <>
+              <FormField label="title" error={errors.title}>
+                <Input
+                  id="create-link-title"
+                  placeholder="My awesome link"
+                  {...register("title")}
+                />
+              </FormField>
 
-          <div className="flex flex-col gap-2">
-            <Label htmlFor="create-link-url">URL</Label>
-            <Input id="create-link-url" placeholder="https://example.com" />
-          </div>
+              <FormField label="url" error={errors.url}>
+                <Input
+                  id="create-link-url"
+                  placeholder="https://example.com"
+                  {...register("url")}
+                />
+              </FormField>
 
-          <div className="flex flex-col gap-2">
-            <Label htmlFor="create-link-description">description</Label>
-            <textarea
-              id="create-link-description"
-              placeholder="Add a short description"
-              className={cn(
-                "min-h-28 w-full rounded-lg border border-input bg-transparent px-3 py-2 text-sm outline-none transition-colors placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50",
-                "resize-none border focus-visible:ring-primary/10",
-              )}
-            />
-          </div>
+              <FormField label="description" error={errors.description}>
+                <textarea
+                  id="create-link-description"
+                  placeholder="Add a short description"
+                  className={cn(
+                    "min-h-28 w-full rounded-lg border border-input bg-transparent px-3 py-2 text-sm outline-none transition-colors placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50",
+                    "resize-none border focus-visible:ring-primary/10",
+                  )}
+                  {...register("description")}
+                />
+              </FormField>
+            </>
+          )}
+        </Form>
 
-          <div className="flex justify-end gap-2 pt-1">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => {
-                setOpen(false);
-              }}
-            >
-              Cancel
-            </Button>
-            <Button type="submit">Submit</Button>
-          </div>
-        </form>
+        <div className="flex justify-end gap-2 ">
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => setOpen(false)}
+          >
+            Cancel
+          </Button>
+          <Button type="submit" form="create-link-input">
+            Submit
+          </Button>
+        </div>
       </PopoverContent>
     </Popover>
   );

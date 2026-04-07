@@ -104,6 +104,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     };
 
     initAuth();
+    return () => {};
   }, []);
 
   const isAuthActionLoading = authAction !== "idle";
