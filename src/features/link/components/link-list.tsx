@@ -28,7 +28,10 @@ import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useLinks } from "../hooks/use-links";
 import type { DateRange } from "react-day-picker";
-import { toDateTimeRangeISOString } from "@/utils/date-util";
+import {
+  formatDateToString,
+  toDateTimeRangeISOString,
+} from "@/utils/date-util";
 import { toast } from "sonner";
 
 const LINK_LIST_SKELETON_ROWS = 3;
