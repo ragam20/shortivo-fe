@@ -72,11 +72,13 @@ export const CalendarPicker = ({
           <div className="flex gap-2 w-full">
             <Input
               disabled
-              value={dateRange?.from ? formatDateToString(dateRange.from) : ""}
+              value={
+                dateRange?.from ? formatDateToString(dateRange.from, "/") : ""
+              }
             />
             <Input
               disabled
-              value={dateRange?.to ? formatDateToString(dateRange.to) : ""}
+              value={dateRange?.to ? formatDateToString(dateRange.to, "/") : ""}
             />
           </div>
           <Calendar

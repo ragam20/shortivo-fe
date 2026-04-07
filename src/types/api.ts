@@ -10,10 +10,10 @@ export class ApiError extends Error {
 }
 
 export type Meta = {
-  page?: number;
-  limit?: number;
-  totalItem?: number;
-  totalPage?: number;
+  page: number;
+  limit: number;
+  totalItem: number;
+  totalPage: number;
 };
 
 export type ApiResponse<T> = {
@@ -60,12 +60,13 @@ export type Account = {
 
 export type Link = Entity<{
   title: string | null;
-  description: string;
-  shortUrl: string;
-  originalUrl: string;
+  description: string | null;
+  shortURL: string;
+  originalURL: string;
   expiredAt: string;
 
   createdAt: string;
+  updatedAt: string;
 }>;
 
 export type MonthLimit = {

@@ -1,9 +1,38 @@
-export function formatDateToString(date: Date): string {
+import type { DateRange } from "react-day-picker";
+
+export function formatDateTimeCompact(date: Date): string {
+  const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+  const months = [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec",
+  ];
+
+  const dayName = days[date.getDay()];
+  const month = months[date.getMonth()];
+  const day = String(date.getDate()).padStart(2, "0");
+  const year = date.getFullYear();
+  const hours = String(date.getHours()).padStart(2, "0");
+  const minutes = String(date.getMinutes()).padStart(2, "0");
+
+  return `${dayName} ${month} ${day} ${year} ${hours}:${minutes}`;
+}
+
+export function formatDateToString(date: Date, separator: string): string {
   const day = String(date.getDate()).padStart(2, "0");
   const month = String(date.getMonth() + 1).padStart(2, "0");
   const year = date.getFullYear();
 
-  return `${day}/${month}/${year}`;
+  return `${year}${separator}${month}${separator}${day}`;
 }
 
 export function toDateRange(value: string): { from: Date; to: Date } {
@@ -23,6 +52,27 @@ export function toDateRange(value: string): { from: Date; to: Date } {
   }
 
   return { from, to };
+}
+
+export function toDateTimeRangeISOString(range: DateRange) {
+  if (!range.from) {
+    return {};
+  }
+
+  const from = new Date(range.from);
+  from.setHours(0, 0, 0, 0);
+
+  let to: Date | undefined;
+
+  if (range.to) {
+    to = new Date(range.to);
+    to.setHours(23, 59, 59, 999);
+  }
+
+  return {
+    from: from.toISOString(),
+    to: to?.toISOString(),
+  };
 }
 
 export function formatDateMMYY(dateStr: string) {

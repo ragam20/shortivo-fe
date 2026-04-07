@@ -10,15 +10,13 @@ import { Button } from "@/components/ui/button";
 import { CopyAbleLinkText } from "@/components/ui/text/copyable-link-text";
 import { Small } from "@/components/ui/typography";
 import type { Link } from "@/types/api";
+import { formatDateTimeCompact } from "@/utils/date-util";
 
 type ViewLinkDetailDialogProps = {
   link: Link | null;
   open: boolean;
   onOpenChange: (open: boolean) => void;
 };
-
-const dummyCreatedAt = "April 1, 2026 at 10:00 AM";
-const dummyUpdatedAt = "April 3, 2026 at 4:30 PM";
 
 const DetailRow = ({
   label,
@@ -61,7 +59,7 @@ export const ViewLinkDetailDialog = ({
 
           <DetailRow label="Short url">
             <CopyAbleLinkText
-              text={link.shortUrl}
+              text={link.shortURL}
               className="text-sm"
               fontStyle="font-medium text-blue-700"
             />
@@ -69,12 +67,12 @@ export const ViewLinkDetailDialog = ({
 
           <DetailRow label="Original url">
             <a
-              href={link.originalUrl}
+              href={link.originalURL}
               target="_blank"
               rel="noopener noreferrer"
               className="break-all text-sm font-medium text-stone-900 hover:underline"
             >
-              {link.originalUrl}
+              {link.originalURL}
             </a>
           </DetailRow>
 
@@ -86,16 +84,23 @@ export const ViewLinkDetailDialog = ({
 
           <div className="grid gap-4 md:grid-cols-2">
             <DetailRow label="Created">
-              <p className="text-sm text-stone-700">{dummyCreatedAt}</p>
+              <p className="text-sm text-stone-700">
+                {formatDateTimeCompact(new Date(link.createdAt))}
+              </p>
             </DetailRow>
 
             <DetailRow label="Last update">
-              <p className="text-sm text-stone-700">{dummyUpdatedAt}</p>
+              <p className="text-sm text-stone-700">
+                {formatDateTimeCompact(new Date(link.updatedAt))}
+              </p>
             </DetailRow>
           </div>
         </div>
 
-        <DialogFooter className="bg-transparent p-0 pt-1" showCloseButton={false}>
+        <DialogFooter
+          className="bg-transparent p-0 pt-1"
+          showCloseButton={false}
+        >
           <Button
             variant="outline"
             onClick={() => {
