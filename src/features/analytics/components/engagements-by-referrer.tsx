@@ -1,3 +1,4 @@
+import type { DateRange } from "@/types/types";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -10,7 +11,8 @@ import {
 } from "chart.js";
 import { useEffect, useRef } from "react";
 import { Bar } from "react-chartjs-2";
-import type { DateRange } from "react-day-picker";
+import { useParams } from "react-router";
+import { useEngagementByReferrer } from "@/features/analytics/api/get-by-referrer";
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Tooltip, Title);
 
@@ -34,7 +36,7 @@ const options: ChartOptions<"bar"> = {
 
 type EngagementByReferrerProps = {
   className?: string;
-  dateRange: DateRange | null | undefined;
+  dateRange: DateRange | undefined;
 };
 
 export const EngagementByReferrer = ({
@@ -42,6 +44,11 @@ export const EngagementByReferrer = ({
   dateRange,
 }: EngagementByReferrerProps) => {
   const chartRef = useRef<ChartJS<"bar"> | null>(null);
+  const { linkId } = useParams();
+  const { engagementByReferrers, error } = useEngagementByReferrer(
+    linkId ?? "",
+    dateRange,
+  );
 
   useEffect(() => {
     return () => {
@@ -50,26 +57,13 @@ export const EngagementByReferrer = ({
     };
   }, []);
 
-  // dummy
-  const socialMediaData = [
-    { id: 1, name: "facebook", value: 120 },
-    { id: 2, name: "instagram", value: 200 },
-    { id: 3, name: "twitter", value: 80 },
-    { id: 4, name: "linkedin", value: 60 },
-    { id: 5, name: "tiktok", value: 300 },
-    { id: 6, name: "youtube", value: 250 },
-    { id: 7, name: "reddit", value: 90 },
-    { id: 8, name: "snapchat", value: 70 },
-    { id: 9, name: "pinterest", value: 40 },
-    { id: 10, name: "whatsapp", value: 180 },
-    { id: 11, name: "redirect", value: 400 },
-  ];
-
   const data: ChartData<"bar"> = {
-    labels: socialMediaData.map((item) => item.name),
+    labels: engagementByReferrers.map((item) =>
+      item.referer?.trim() ? item.referer : "Unknown",
+    ),
     datasets: [
       {
-        data: socialMediaData.map((item) => item.value),
+        data: engagementByReferrers.map((item) => item.clicks),
 
         backgroundColor: "#4287f5",
       },
@@ -80,13 +74,18 @@ export const EngagementByReferrer = ({
     <div className={className}>
       <div className="w-full rounded-lg bg-white p-4 shadow-sm">
         <h4 className="text-lg font-semibold">Engagement by Referrer</h4>
+        {error ? <p className="mt-2 text-sm text-red-500">{error}</p> : null}
         <div className="w-full mt-6 flex flex-col h-54">
-          <Bar
-            id="engagement-by-referrer"
-            data={data}
-            ref={chartRef}
-            options={options}
-          />
+          {engagementByReferrers.length > 0 ? (
+            <Bar
+              id="engagement-by-referrer"
+              data={data}
+              ref={chartRef}
+              options={options}
+            />
+          ) : (
+            <p className="text-sm text-stone-500">No referrer data available.</p>
+          )}
         </div>
       </div>
     </div>

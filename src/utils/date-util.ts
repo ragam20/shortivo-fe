@@ -1,4 +1,17 @@
 import type { DateRange } from "react-day-picker";
+import type { DateRange as Range } from "@/types/types";
+
+export function getLast7DaysRange(): Range {
+  const now = new Date();
+
+  const from = new Date();
+  from.setDate(now.getDate() - 7);
+
+  return {
+    from: from.toISOString(),
+    to: now.toISOString(),
+  };
+}
 
 export function formatDateTimeCompact(date: Date): string {
   const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];

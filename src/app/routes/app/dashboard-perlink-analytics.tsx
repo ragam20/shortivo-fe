@@ -7,6 +7,7 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
+import { Button } from "@/components/ui/button";
 import { H3, P } from "@/components/ui/typography";
 import { paths } from "@/config/paths";
 import { EngagementByDevice } from "@/features/analytics/components/engagements-by-device";
@@ -14,8 +15,9 @@ import { EngagementByReferrer } from "@/features/analytics/components/engagement
 import { EngagementOvertime } from "@/features/analytics/components/engagements-overtime";
 import { FilterBoxAnalytics } from "@/features/analytics/components/filter-box-analytics";
 import { TotalClickCount } from "@/features/analytics/components/total-click-count";
+import type { DateRange } from "@/types/types";
+import { XIcon } from "lucide-react";
 import { useState } from "react";
-import type { DateRange } from "react-day-picker";
 import Masonry from "react-masonry-css";
 import { Link } from "react-router";
 
@@ -24,10 +26,16 @@ const masonryBreakpoints = {
   1280: 1,
 };
 
-export const DashboardAnalyticsRoute = () => {
-  const [currDateRange, setCurrDateRange] = useState<
-    DateRange | null | undefined
-  >(null);
+export const DashboardPerLinkAnalyticsRoute = () => {
+  const [currDateRange, setCurrDateRange] = useState<DateRange | undefined>(
+    undefined,
+  );
+  const [isFilterActive, setIsFilterActive] = useState<boolean>(false);
+
+  const handleClearFilters = () => {
+    setIsFilterActive(false);
+    setCurrDateRange(undefined);
+  };
 
   return (
     <ContentLayout>
@@ -56,7 +64,28 @@ export const DashboardAnalyticsRoute = () => {
           </div>
         </div>
 
-        <FilterBoxAnalytics onDateRangeChange={setCurrDateRange} />
+        <div className="flex gap-4 flex-wrap">
+          <FilterBoxAnalytics
+            className="w-fit"
+            onDateRangeChange={(v) => {
+              setIsFilterActive(true);
+              setCurrDateRange({
+                from: v.from,
+                to: v.to,
+              });
+            }}
+          />
+          {isFilterActive ? (
+            <Button
+              variant="outline"
+              className="py-5"
+              onClick={handleClearFilters}
+            >
+              <XIcon />
+              <p>Clear filter</p>
+            </Button>
+          ) : null}
+        </div>
 
         <Masonry
           breakpointCols={masonryBreakpoints}

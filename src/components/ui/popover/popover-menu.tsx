@@ -5,11 +5,15 @@ import {
 } from "@/components/ui/popover";
 import type { LucideProps } from "lucide-react";
 
+type MenuIcon = React.ForwardRefExoticComponent<
+  Omit<LucideProps, "ref"> & React.RefAttributes<SVGSVGElement>
+>;
+
 export type MenuItem = {
   label: string;
-  icon?: React.ForwardRefExoticComponent<
-    Omit<LucideProps, "ref"> & React.RefAttributes<SVGSVGElement>
-  >;
+  icon?: MenuIcon;
+  trailingIcon?: MenuIcon;
+  disabled?: boolean;
   onClick: () => void;
 };
 
@@ -30,11 +34,24 @@ export const MenuPopover = ({
           {items.map((item, index) => (
             <li
               key={index}
-              onClick={item.onClick}
-              className={`${item.icon ? "flex gap-1" : ""} w-full  items-center hover:bg-muted cursor-pointer rounded`}
+              onClick={() => {
+                if (item.disabled) {
+                  return;
+                }
+
+                item.onClick();
+              }}
+              className={`flex w-full items-center justify-between rounded px-2 py-1 ${
+                item.disabled
+                  ? "cursor-not-allowed text-stone-500"
+                  : "cursor-pointer hover:bg-muted"
+              }`}
             >
-              {item.icon && <item.icon className="size-3" />}
-              <p className="py-0.5">{item.label}</p>
+              <div className="flex items-center gap-1">
+                {item.icon && <item.icon className="size-3" />}
+                <p className="py-0.5">{item.label}</p>
+              </div>
+              {item.trailingIcon ? <item.trailingIcon className="size-3" /> : null}
             </li>
           ))}
         </ul>

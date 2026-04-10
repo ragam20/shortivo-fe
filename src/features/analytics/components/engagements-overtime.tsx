@@ -6,39 +6,45 @@ import {
   LinearScale,
   CategoryScale,
   Title,
+  Tooltip,
   type ChartData,
   type ChartOptions,
 } from "chart.js";
+import { useEgagementByOvertime } from "@/features/analytics/api/get-by-overtime";
 import { formatDateMMYY } from "@/utils/date-util";
 import { useEffect, useRef } from "react";
-import type { DateRange } from "react-day-picker";
+import { useParams } from "react-router";
+import type { DateRange } from "@/types/types";
 
-ChartJS.register(LineElement, PointElement, LinearScale, CategoryScale, Title);
+ChartJS.register(
+  LineElement,
+  PointElement,
+  LinearScale,
+  CategoryScale,
+  Title,
+  Tooltip,
+);
 
 type EngagementOvertimeProps = {
   classname?: string;
-  dateRange: DateRange | null | undefined;
+  dateRange: DateRange | undefined;
 };
 
 export const EngagementOvertime = ({
   classname,
   dateRange,
 }: EngagementOvertimeProps) => {
-  const rawData = [
-    { date: "2026-03-24", value: 33 },
-    { date: "2026-03-25", value: 20 },
-    { date: "2026-03-27", value: 17 },
-    { date: "2026-03-28", value: 52 },
-    { date: "2026-03-29", value: 45 },
-    { date: "2026-03-30", value: 66 },
-    { date: "2026-03-31", value: 25 },
-  ];
+  const { linkId } = useParams();
+  const { totalEgagements, error } = useEgagementByOvertime(
+    linkId ?? "",
+    dateRange,
+  );
 
   const data: ChartData<"line"> = {
-    labels: rawData.map((item) => formatDateMMYY(item.date)),
+    labels: totalEgagements.map((item) => formatDateMMYY(item.date)),
     datasets: [
       {
-        data: rawData.map((item) => item.value),
+        data: totalEgagements.map((item) => item.clicks),
 
         borderColor: "#937be3",
         tension: 0.1,
@@ -86,14 +92,19 @@ export const EngagementOvertime = ({
         <h4 className="text-lg font-semibold text-stone-900">
           Engagement Overtime
         </h4>
+        {error ? <p className="text-sm text-red-500">{error}</p> : null}
         <div className="h-52 w-full md:h-60">
-          <Line
-            id="engagement-overtime-chart"
-            data={data}
-            options={options}
-            ref={chartRef}
-            redraw
-          />
+          {totalEgagements.length > 0 ? (
+            <Line
+              id="engagement-overtime-chart"
+              data={data}
+              options={options}
+              ref={chartRef}
+              redraw
+            />
+          ) : (
+            <p className="text-sm text-stone-500">No overtime data available.</p>
+          )}
         </div>
       </div>
     </div>

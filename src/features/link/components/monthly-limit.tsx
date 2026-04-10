@@ -2,7 +2,11 @@ import { useEffect, useState } from "react";
 import { getMonthLimit } from "../api/get-monthly-limit";
 import { P } from "@/components/ui/typography";
 
-export const MonthLimitText = () => {
+type MonthLimitTextProps = {
+  refreshKey?: number;
+};
+
+export const MonthLimitText = ({ refreshKey = 0 }: MonthLimitTextProps) => {
   const [currLimit, setCurrLimit] = useState(0);
 
   useEffect(() => {
@@ -13,7 +17,7 @@ export const MonthLimitText = () => {
     };
 
     initMonthlyLimit();
-  }, [currLimit]);
+  }, [refreshKey]);
 
   return (
     <>
