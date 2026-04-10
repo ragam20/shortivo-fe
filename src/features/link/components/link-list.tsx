@@ -9,6 +9,7 @@ import {
   Eye as EyeIcon,
   Trash2 as Trash2Icon,
   ChartColumn as ChartColumnIcon,
+  Lock as LockIcon,
   SearchIcon,
   X as XIcon,
 } from "lucide-react";
@@ -30,14 +31,19 @@ import { useLinks } from "../hooks/use-links";
 import type { DateRange } from "react-day-picker";
 import { toDateTimeRangeISOString } from "@/utils/date-util";
 import { toast } from "sonner";
+import { AuthContext } from "@/lib/auth-context";
+import { PLAN } from "@/types/types";
+import { useContext } from "react";
 
 const LINK_LIST_SKELETON_ROWS = 3;
 
 export const LinkList = () => {
+  const ctx = useContext(AuthContext);
   const [selectedLink, setSelectedLink] = useState<Link | null>(null);
   const [openDetailDialog, setOpenDetailDialog] = useState(false);
   const [calendarPickerKey, setCalendarPickerKey] = useState(0);
   const navigate = useNavigate();
+  const isFreePlan = ctx?.account?.plan?.code === PLAN.FREE;
   const {
     links,
     filterParams,
@@ -95,8 +101,14 @@ export const LinkList = () => {
     {
       label: "Analytics",
       icon: ChartColumnIcon,
+      trailingIcon: isFreePlan ? LockIcon : undefined,
+      disabled: isFreePlan,
       onClick() {
-        navigate(paths.app.analytics.dashboard.getHref());
+        if (isFreePlan) {
+          return;
+        }
+
+        navigate(paths.app.analytics.perlink.getHref(link.id.toString()));
       },
     },
     {

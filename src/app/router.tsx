@@ -11,7 +11,8 @@ import { LinksRoute } from "./routes/app/links";
 import { AnalyticsRoute } from "./routes/app/analytics";
 import { Toaster } from "@/components/ui/sonner";
 import { PricingRoute } from "./routes/pricing";
-import { DashboardAnalyticsRoute } from "./routes/app/dashboard-analytics";
+import { DashboardPerLinkAnalyticsRoute } from "./routes/app/dashboard-perlink-analytics";
+import { DashboardPerLinkAnalyticsPreviewRoute } from "./routes/app/dashboard-perlink-analytics-preview";
 import { EditLinkRoute } from "./routes/app/edit-link";
 import { RouteErrorBoundary } from "./route-error-boundary";
 import { ProtectedRoute } from "@/lib/auth-provider";
@@ -46,7 +47,6 @@ const createAppRouter = createBrowserRouter([
       </ProtectedRoute>
     ),
 
-    // element: <AppRoot />,
     ErrorBoundary: RouteErrorBoundary,
 
     children: [
@@ -72,8 +72,13 @@ const createAppRouter = createBrowserRouter([
         ErrorBoundary: RouteErrorBoundary,
       },
       {
-        path: paths.app.analytics.dashboard.path,
-        Component: DashboardAnalyticsRoute,
+        path: paths.app.analytics.perlink.paths,
+        Component: DashboardPerLinkAnalyticsRoute,
+        ErrorBoundary: RouteErrorBoundary,
+      },
+      {
+        path: paths.app.analytics.preview.paths,
+        Component: DashboardPerLinkAnalyticsPreviewRoute,
         ErrorBoundary: RouteErrorBoundary,
       },
     ],

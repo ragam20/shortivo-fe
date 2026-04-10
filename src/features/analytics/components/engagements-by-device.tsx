@@ -9,25 +9,55 @@ import {
   type ChartOptions,
 } from "chart.js";
 import { Doughnut } from "react-chartjs-2";
-import type { DateRange } from "react-day-picker";
+import { useParams } from "react-router";
+import { useEngagementByDevice } from "@/features/analytics/api/get-by-device";
+import type { DateRange } from "@/types/types";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
 type EngagementByDeviceProps = {
   classname?: string;
-  dateRange: DateRange | null | undefined;
+  dateRange: DateRange | undefined;
 };
 
 export const EngagementByDevice = ({
   classname,
   dateRange,
 }: EngagementByDeviceProps) => {
-  const deviceStats = [
-    { label: "Phone", value: 10, color: "#6366F1" },
-    { label: "Tablets", value: 20, color: "#10B981" },
-    { label: "Web", value: 30, color: "#F97316" },
-    { label: "Unknown", value: 5, color: "#EFef4f" },
-  ] as const;
+  const { linkId } = useParams();
+  const { engagementByDevice, error } = useEngagementByDevice(
+    linkId ?? "",
+    dateRange,
+  );
+
+  const deviceStats = engagementByDevice.map((item, index) => {
+    const normalizedDevice = item.device.trim().toLowerCase();
+
+    const deviceConfig: Record<string, { label: string; color: string }> = {
+      mobile: { label: "Mobile", color: "#6366F1" },
+      phone: { label: "Phone", color: "#6366F1" },
+      tablet: { label: "Tablet", color: "#10B981" },
+      web: { label: "Web", color: "#F97316" },
+      desktop: { label: "Desktop", color: "#F97316" },
+      unknown: { label: "Unknown", color: "#EAB308" },
+    };
+
+    const fallbackColors = ["#6366F1", "#10B981", "#F97316", "#EAB308"];
+    const fallbackLabel =
+      normalizedDevice.length > 0
+        ? `${item.device.charAt(0).toUpperCase()}${item.device.slice(1)}`
+        : "Unknown";
+    const config = deviceConfig[normalizedDevice] ?? {
+      label: fallbackLabel,
+      color: fallbackColors[index % fallbackColors.length],
+    };
+
+    return {
+      label: config.label,
+      value: item.clicks,
+      color: config.color,
+    };
+  });
 
   const data: ChartData<"doughnut"> = {
     labels: deviceStats.map((item) => item.label),
@@ -110,6 +140,7 @@ export const EngagementByDevice = ({
         <h4 className="text-lg font-semibold text-stone-900">
           Engagement by device
         </h4>
+        {error ? <p className="mt-2 text-sm text-red-500">{error}</p> : null}
         <div className="w-full mt-6 flex flex-col gap-6 md:flex-row justify-center">
           <div className="w-full xl:w-64 p-2 mx-auto h-72 md:h-80 md:flex-1">
             <Doughnut
@@ -123,27 +154,31 @@ export const EngagementByDevice = ({
           </div>
 
           <div>
-            <ul className="space-y-4 lg:space-y-0">
-              {deviceStats.map((item) => (
-                <li
-                  key={item.label}
-                  className="flex items-center justify-between gap-4"
-                >
-                  <div className="flex items-center gap-3">
-                    <span
-                      className="size-3 rounded-full"
-                      style={{ backgroundColor: item.color }}
-                    />
-                    <span className="text-sm font-medium text-stone-700">
-                      {item.label}
+            {deviceStats.length > 0 ? (
+              <ul className="space-y-4 lg:space-y-0">
+                {deviceStats.map((item) => (
+                  <li
+                    key={item.label}
+                    className="flex items-center justify-between gap-4"
+                  >
+                    <div className="flex items-center gap-3">
+                      <span
+                        className="size-3 rounded-full"
+                        style={{ backgroundColor: item.color }}
+                      />
+                      <span className="text-sm font-medium text-stone-700">
+                        {item.label}
+                      </span>
+                    </div>
+                    <span className="text-sm font-semibold text-stone-900">
+                      {item.value}
                     </span>
-                  </div>
-                  <span className="text-sm font-semibold text-stone-900">
-                    {item.value}
-                  </span>
-                </li>
-              ))}
-            </ul>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="text-sm text-stone-500">No device data available.</p>
+            )}
           </div>
         </div>
       </div>

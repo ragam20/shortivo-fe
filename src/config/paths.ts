@@ -50,6 +50,18 @@ export const paths = {
         path: "analytics/dashboard",
         getHref: () => `${paths.app.root.getHref()}/analytics/dashboard`,
       },
+
+      perlink: {
+        paths: "analytics/:linkId/dashboard",
+        getHref: (linkId: string) =>
+          `${paths.app.root.getHref()}/analytics/${linkId}/dashboard`,
+      },
+
+      preview: {
+        paths: "analytics/preview/dashboard",
+        getHref: () =>
+          `${paths.app.root.getHref()}/analytics/preview/dashboard`,
+      },
     },
 
     settings: {

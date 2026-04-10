@@ -1,4 +1,5 @@
 import type { ISOStringFormat } from "date-fns";
+import { number } from "zod";
 
 export class ApiError extends Error {
   status?: number;
@@ -62,6 +63,8 @@ export type Link = Entity<{
   title: string | null;
   description: string | null;
   shortURL: string;
+  clickCount: number;
+  uniqueClick: number;
   originalURL: string;
   expiredAt: string;
 
@@ -72,4 +75,28 @@ export type Link = Entity<{
 export type MonthLimit = {
   monthlyLimit: number;
   currLimit: number;
+};
+
+export type GetClicks = {
+  totalClick: number;
+  uniqueClick: number;
+};
+
+export type GetTotalEngagementByDevice = {
+  device: string;
+  clicks: number;
+};
+
+export type GetTotalEngagementByReferer = {
+  referer: string;
+  clicks: number;
+};
+
+export type GetTotalEngagementByOvertime = {
+  date: string;
+  clicks: number;
+};
+
+export type GetTotalCreatedLink = {
+  totalLink: number;
 };
