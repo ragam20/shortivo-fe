@@ -11,9 +11,8 @@ export const signinInputSchema = z.object({
   password: z.string().min(5, "Required"),
 });
 export type SignInInput = z.infer<typeof signinInputSchema>;
-export const signin = async (data: SignInInput): Promise<AuthResponse> => {
-  const resp = await publicApi.post("/auth/signin", data);
-  return resp.data;
+export const signin = async (data: SignInInput): Promise<void> => {
+  await publicApi.post("/auth/signin", data);
 };
 
 export const signupInputSchema = z.object({

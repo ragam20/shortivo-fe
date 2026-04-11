@@ -7,6 +7,7 @@ import googleICPath from "@/assets/ic_google_color.svg";
 import { useContext, useState } from "react";
 import { paths } from "@/config/paths";
 import { AuthContext } from "@/lib/auth-context";
+import { env } from "@/config/env";
 
 const schema = z.object({
   email: z.string().nonempty("Email is required").email("Invalid email"),
@@ -40,6 +41,10 @@ export const LoginForm = ({ onSuccess, navigateTo }: LoginForm) => {
     }
   };
 
+  const handleGoogleLogin = () => {
+    window.location.assign(`${env.API_URL}/auth/google`);
+  };
+
   return (
     <>
       <div>
@@ -65,7 +70,9 @@ export const LoginForm = ({ onSuccess, navigateTo }: LoginForm) => {
             variant={"outline"}
             className="border w-full py-5 flex gap-1"
             disabled={ctx?.isAuthActionLoading}
-            onClick={() => {}}
+            onClick={() => {
+              handleGoogleLogin();
+            }}
           >
             <img src={googleICPath} className="size-4" />
             Google

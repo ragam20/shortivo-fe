@@ -1,6 +1,5 @@
 import type React from "react";
 import { useContext, useEffect, useState } from "react";
-import { authSession } from "./auth-session-manager";
 import {
   signup,
   signout,
@@ -8,7 +7,6 @@ import {
   signin,
   type SignInInput,
   type SignupInput,
-  getRefreshToken,
 } from "./auth";
 import type { Account } from "@/types/api";
 import { Navigate, useLocation } from "react-router";
@@ -31,9 +29,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const login = async (data: SignInInput) => {
     try {
-      const resp = await signin(data);
-
-      authSession.setAccessToken(resp.accessToken);
+      await signin(data);
 
       const account = await getAccount();
       setAccount(account);
@@ -41,10 +37,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       setAuthAction("signin");
 
       await wait(signInDelayMs);
-
-      return resp;
     } catch (err) {
-      authSession?.clearAccessToken();
       setAccount(null);
 
       throw err;
@@ -55,18 +48,13 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const register = async (data: SignupInput) => {
     try {
-      const resp = await signup(data);
-
-      authSession.setAccessToken(resp.accessToken);
+      await signup(data);
 
       const account = await getAccount();
       setAccount(account);
 
       setAuthAction("register");
-
-      return resp;
     } catch (err) {
-      authSession.clearAccessToken();
       setAccount(null);
 
       throw err;
@@ -81,7 +69,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     try {
       await signout();
     } finally {
-      authSession.clearAccessToken();
       setAccount(null);
       setAuthAction("idle");
     }
@@ -90,13 +77,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
     const initAuth = async () => {
       try {
-        const resp = await getRefreshToken();
-        authSession.setAccessToken(resp.accessToken);
-
         const account = await getAccount();
         setAccount(account);
       } catch {
-        authSession.clearAccessToken();
         setAccount(null);
       } finally {
         setIsLoading(false);

@@ -7,6 +7,7 @@ import googleICPath from "@/assets/ic_google_color.svg";
 import { useContext, useState } from "react";
 import { paths } from "@/config/paths";
 import { AuthContext } from "@/lib/auth-context";
+import { env } from "@/config/env";
 
 const passwordRules = [
   {
@@ -76,9 +77,15 @@ export const RegisterForm = ({ onSuccess, navigateTo }: RegisterForm) => {
     try {
       await ctx.register(data);
       onSuccess();
-    } catch (err: any) {
-      setErrMessage(err.message);
+    } catch (err: unknown) {
+      setErrMessage(
+        err instanceof Error ? err.message : "Something went wrong",
+      );
     }
+  };
+
+  const handleGoogleLogin = () => {
+    window.location.assign(`${env.API_URL}/auth/google`);
   };
 
   return (
@@ -102,9 +109,13 @@ export const RegisterForm = ({ onSuccess, navigateTo }: RegisterForm) => {
 
       <div className="my-10">
         <Button
+          type="button"
           variant={"outline"}
           className="border w-full py-5 flex gap-1"
           disabled={ctx?.isAuthActionLoading}
+          onClick={() => {
+            handleGoogleLogin();
+          }}
         >
           <img src={googleICPath} className="size-4" />
           Google
