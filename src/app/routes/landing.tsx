@@ -4,7 +4,7 @@ import { H3, H4, P } from "@/components/ui/typography";
 import BadgeCheckIC from "@/assets/badge-check.svg?react";
 import MenuIC from "@/assets/menu.svg?react";
 import CloseIC from "@/assets/close.svg?react";
-import { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { Drawer } from "@/components/ui/drawer/drawer";
 import { Input } from "@/components/ui/input";
 import { Link, useNavigate } from "react-router";
@@ -44,6 +44,23 @@ export const Landing = () => {
   if (isRedirecting) {
     return <AuthLoadingOverlay label="Opening Dashboard" />;
   }
+
+  const refCard = useRef<HTMLDivElement>(null);
+
+  const handleMove = (e: React.MouseEvent) => {
+    const rect = refCard.current!.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+
+    const rotateX = (y / rect.height - 0.5) * 30;
+    const rotateY = (x / rect.width - 0.5) * -30;
+
+    refCard.current!.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+  };
+
+  const resetMove = () => {
+    refCard.current!.style.transform = "rotateX(0) rotateY(0)";
+  };
 
   return (
     <>
@@ -186,7 +203,12 @@ export const Landing = () => {
             </div>
           </div>
 
-          <div className="md:w-2xl w-full shadow-[0_0_10px_rgba(0,0,0,0.1)] mb-4">
+          <div
+            ref={refCard}
+            onMouseMove={handleMove}
+            onMouseLeave={resetMove}
+            className="md:w-2xl w-full shadow-[0_0_10px_rgba(0,0,0,0.1)] mb-4 transition-transform duration-200 ease-out will-change-transform"
+          >
             <div className="p-4">
               <H3>Shorten a long link</H3>
               <Input

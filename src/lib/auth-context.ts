@@ -1,4 +1,4 @@
-import type { AuthResponse, Account } from "@/types/api";
+import type { Account } from "@/types/api";
 import { createContext } from "react";
 import type { SignInInput, SignupInput } from "./auth";
 
@@ -6,8 +6,8 @@ type AuthContextType = {
   account: Account | null;
   isLoading: boolean;
   isAuthActionLoading: boolean;
-  login: (data: SignInInput) => Promise<AuthResponse>;
-  register: (data: SignupInput) => Promise<AuthResponse>;
+  login: (data: SignInInput) => Promise<void>;
+  register: (data: SignupInput) => Promise<void>;
   logout: () => Promise<void>;
 };
 

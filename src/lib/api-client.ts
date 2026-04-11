@@ -1,8 +1,7 @@
 import axios, { type InternalAxiosRequestConfig } from "axios";
 import { env } from "@/config/env";
 import { paths } from "@/config/paths";
-import { authSession } from "./auth-session-manager";
-import { ApiError, type ApiResponse, type AuthResponse } from "@/types/api";
+import { ApiError } from "@/types/api";
 
 const axiosBaseConfig = {
   baseURL: env.API_URL,
@@ -15,17 +14,6 @@ const axiosBaseConfig = {
 
 export const publicApi = axios.create(axiosBaseConfig);
 export const privateApi = axios.create(axiosBaseConfig);
-
-privateApi.interceptors.request.use((config: InternalAxiosRequestConfig) => {
-  const token = authSession.getAccessToken();
-
-  if (token) {
-    config.headers = config.headers ?? {};
-    config.headers["Authorization"] = `Bearer ${token}`;
-  }
-
-  return config;
-});
 
 publicApi.interceptors.response.use(
   function onFullfilled(response) {
@@ -41,7 +29,6 @@ publicApi.interceptors.response.use(
 );
 
 let isRefreshing = false;
-let refreshPromise: Promise<string> | null = null;
 
 privateApi.interceptors.response.use(
   function onFullfilled(response) {
@@ -67,29 +54,13 @@ privateApi.interceptors.response.use(
         if (!isRefreshing) {
           isRefreshing = true;
 
-          refreshPromise = publicApi
-            .post<ApiResponse<AuthResponse>, ApiResponse<AuthResponse>>(
-              "/auth/refresh-token",
-            )
-            .then((res) => {
-              const newToken = res.data.accessToken;
-              authSession.setAccessToken(newToken);
-              return newToken;
-            })
-            .finally(() => {
-              isRefreshing = false;
-            });
+          publicApi.post("/auth/refresh-token").finally(() => {
+            isRefreshing = false;
+          });
         }
-
-        const newToken = await refreshPromise;
-
-        originalRequest.headers = originalRequest.headers ?? {};
-        originalRequest.headers["Authorization"] = `Bearer ${newToken}`;
 
         return privateApi(originalRequest);
       } catch {
-        authSession.clearAccessToken();
-
         const searchParams = new URLSearchParams(window.location.search);
         const redirectTo =
           searchParams.get("redirectTo") || window.location.pathname;
