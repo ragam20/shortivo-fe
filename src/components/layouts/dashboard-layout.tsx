@@ -8,7 +8,6 @@ import {
   SidebarMenuItem,
   SidebarProvider,
   SidebarTrigger,
-  useSidebar,
 } from "../ui/sidebar";
 import { H3 } from "../ui/typography";
 import { Head } from "../seo/head";
@@ -28,6 +27,7 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { AvatarPopOver } from "../ui/popover/popover-avatar";
 import { AuthContext } from "@/lib/auth-context";
 import { PLAN } from "@/types/types";
+import { useSidebar } from "@/hooks/use-sidebar";
 
 type DashboardMenu = {
   title: string;

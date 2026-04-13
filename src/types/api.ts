@@ -1,5 +1,4 @@
 import type { ISOStringFormat } from "date-fns";
-import { number } from "zod";
 
 export class ApiError extends Error {
   status?: number;
