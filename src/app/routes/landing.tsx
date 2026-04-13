@@ -1,36 +1,29 @@
 import { Button } from "@/components/ui/button";
 import { AuthLoadingOverlay } from "@/components/ui/auth-loading-overlay";
 import { H3, H4, P } from "@/components/ui/typography";
-import BadgeCheckIC from "@/assets/badge-check.svg?react";
-import MenuIC from "@/assets/menu.svg?react";
-import CloseIC from "@/assets/close.svg?react";
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { Drawer } from "@/components/ui/drawer/drawer";
 import { Input } from "@/components/ui/input";
 import { Link, useNavigate } from "react-router";
 import { paths } from "@/config/paths";
 import { AuthContext } from "@/lib/auth-context";
+import { BadgeCheckIcon, Menu as MenuIC, X as XIC } from "lucide-react";
 
 const landingRedirectDelayMs = 2000;
 
 export const Landing = () => {
+  const refCard = useRef<HTMLDivElement>(null);
   const [openDrawer, setOpenDrawer] = useState(false);
-  const [isRedirecting, setIsRedirecting] = useState(false);
   const navigate = useNavigate();
 
   const auth = useContext(AuthContext);
 
+  const isRedirecting = !auth?.isLoading && !!auth?.account;
+
   useEffect(() => {
-    if (auth?.isLoading) {
+    if (!isRedirecting) {
       return;
     }
-
-    if (!auth?.account) {
-      setIsRedirecting(false);
-      return;
-    }
-
-    setIsRedirecting(true);
 
     const timeoutId = window.setTimeout(() => {
       navigate(paths.app.root.path, { replace: true });
@@ -39,13 +32,11 @@ export const Landing = () => {
     return () => {
       window.clearTimeout(timeoutId);
     };
-  }, [auth?.isLoading, auth?.account, navigate]);
+  }, [isRedirecting, navigate]);
 
   if (isRedirecting) {
     return <AuthLoadingOverlay label="Opening Dashboard" />;
   }
-
-  const refCard = useRef<HTMLDivElement>(null);
 
   const handleMove = (e: React.MouseEvent) => {
     const rect = refCard.current!.getBoundingClientRect();
@@ -75,7 +66,7 @@ export const Landing = () => {
             >
               Shortivo
             </H3>
-            <CloseIC
+            <XIC
               className="size-6"
               onClick={() => setOpenDrawer(!openDrawer)}
             />
@@ -186,17 +177,17 @@ export const Landing = () => {
               </p>
               <ul className="mt-4 flex flex-col lg:block items-center">
                 <li className="flex items-center gap-1">
-                  <BadgeCheckIC className="size-4" />
+                  <BadgeCheckIcon className="size-4" />
                   customize 3 link per month
                 </li>
 
                 <li className="flex items-center gap-1">
-                  <BadgeCheckIC className="size-4" />
+                  <BadgeCheckIcon className="size-4" />
                   create 10 short links each month
                 </li>
 
                 <li className="flex items-center gap-1">
-                  <BadgeCheckIC className="size-4" />
+                  <BadgeCheckIcon className="size-4" />
                   enjoy unlimited clicks
                 </li>
               </ul>

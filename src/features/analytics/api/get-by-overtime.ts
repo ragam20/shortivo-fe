@@ -1,5 +1,9 @@
 import { privateApi } from "@/lib/api-client";
-import type { ApiResponse, GetTotalEngagementByOvertime } from "@/types/api";
+import {
+  ApiError,
+  type ApiResponse,
+  type GetTotalEngagementByOvertime,
+} from "@/types/api";
 import type { DateRange } from "@/types/types";
 import { useEffect, useState } from "react";
 
@@ -42,8 +46,10 @@ export const useEgagementByOvertime = (
 
         setTotalEngagement(resp.data);
         setError(null);
-      } catch (err: any) {
-        setError(err.message);
+      } catch (err) {
+        if (err instanceof ApiError) {
+          setError(err.message);
+        }
       }
     };
 

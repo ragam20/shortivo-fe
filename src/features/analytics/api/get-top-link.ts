@@ -1,5 +1,5 @@
 import { privateApi } from "@/lib/api-client";
-import type { ApiResponse, Link } from "@/types/api";
+import { ApiError, type ApiResponse, type Link } from "@/types/api";
 import type { DateRange } from "@/types/types";
 import { useEffect, useState } from "react";
 
@@ -30,8 +30,10 @@ export const useTopLink = (limit: number, dateRange: DateRange | undefined) => {
         setTopLink(resp.data);
 
         setError(null);
-      } catch (err: any) {
-        setError(err.message);
+      } catch (err) {
+        if (err instanceof ApiError) {
+          setError(err.message);
+        }
       }
     };
 

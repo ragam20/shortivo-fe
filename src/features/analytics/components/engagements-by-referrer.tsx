@@ -22,7 +22,7 @@ const options: ChartOptions<"bar"> = {
   plugins: {
     tooltip: {
       callbacks: {
-        label: (context: any): string => {
+        label: (context): string => {
           const value = context.raw;
           return `  ${value}`;
         },
@@ -84,7 +84,9 @@ export const EngagementByReferrer = ({
               options={options}
             />
           ) : (
-            <p className="text-sm text-stone-500">No referrer data available.</p>
+            <p className="text-sm text-stone-500">
+              No referrer data available.
+            </p>
           )}
         </div>
       </div>
