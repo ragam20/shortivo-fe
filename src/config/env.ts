@@ -6,7 +6,7 @@ const createEnv = () => {
     APP_URL: z
       .string()
       .optional()
-      .transform((val) => val || "http://localhost:3000"),
+      .transform((val) => val || window.location.origin),
   });
 
   const envVars = Object.entries(import.meta.env).reduce<
