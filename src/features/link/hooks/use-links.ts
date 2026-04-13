@@ -120,7 +120,10 @@ function buildQuery(params: FilterParams) {
   if (params.createdFrom) query.append("created_from", params.createdFrom);
 
   query.append("page", params.page.toString());
-  query.append("limit", params.limit.toString());
+  query.append(
+    "limit",
+    params.limit ? params.limit?.toString() : LINKS_PER_PAGE.toString(),
+  );
 
   return query.toString();
 }
