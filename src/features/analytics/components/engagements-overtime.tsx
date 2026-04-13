@@ -69,7 +69,7 @@ export const EngagementOvertime = ({
         padding: 10,
         displayColors: false,
         callbacks: {
-          label: (context: any) => {
+          label: (context) => {
             return `Value ${context.raw}`;
           },
         },
@@ -103,7 +103,9 @@ export const EngagementOvertime = ({
               redraw
             />
           ) : (
-            <p className="text-sm text-stone-500">No overtime data available.</p>
+            <p className="text-sm text-stone-500">
+              No overtime data available.
+            </p>
           )}
         </div>
       </div>

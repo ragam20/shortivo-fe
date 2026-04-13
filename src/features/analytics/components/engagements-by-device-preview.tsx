@@ -79,7 +79,7 @@ export const EngagementByDevicePreview = ({
     plugins: {
       tooltip: {
         callbacks: {
-          label: (context: any) => {
+          label: (context) => {
             const value = context.raw;
             return `  ${value}`;
           },
@@ -164,7 +164,9 @@ export const EngagementByDevicePreview = ({
                 ))}
               </ul>
             ) : (
-              <p className="text-sm text-stone-500">No device data available.</p>
+              <p className="text-sm text-stone-500">
+                No device data available.
+              </p>
             )}
           </div>
         </div>

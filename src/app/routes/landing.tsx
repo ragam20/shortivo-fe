@@ -12,23 +12,18 @@ import { BadgeCheckIcon, Menu as MenuIC, X as XIC } from "lucide-react";
 const landingRedirectDelayMs = 2000;
 
 export const Landing = () => {
+  const refCard = useRef<HTMLDivElement>(null);
   const [openDrawer, setOpenDrawer] = useState(false);
-  const [isRedirecting, setIsRedirecting] = useState(false);
   const navigate = useNavigate();
 
   const auth = useContext(AuthContext);
 
+  const isRedirecting = !auth?.isLoading && !!auth?.account;
+
   useEffect(() => {
-    if (auth?.isLoading) {
+    if (!isRedirecting) {
       return;
     }
-
-    if (!auth?.account) {
-      setIsRedirecting(false);
-      return;
-    }
-
-    setIsRedirecting(true);
 
     const timeoutId = window.setTimeout(() => {
       navigate(paths.app.root.path, { replace: true });
@@ -37,13 +32,11 @@ export const Landing = () => {
     return () => {
       window.clearTimeout(timeoutId);
     };
-  }, [auth?.isLoading, auth?.account, navigate]);
+  }, [isRedirecting, navigate]);
 
   if (isRedirecting) {
     return <AuthLoadingOverlay label="Opening Dashboard" />;
   }
-
-  const refCard = useRef<HTMLDivElement>(null);
 
   const handleMove = (e: React.MouseEvent) => {
     const rect = refCard.current!.getBoundingClientRect();

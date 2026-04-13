@@ -18,30 +18,27 @@ import { cloneElement, isValidElement, type ReactElement } from "react";
 import { cn } from "@/lib/utils";
 import { EyeOffIcon, EyeIcon as EyeIC } from "lucide-react";
 
-type FormProps<TFormValues extends FieldValues, Schema> = {
+type FormProps<Schema extends ZodType<FieldValues, FieldValues>> = {
   schema: Schema;
-  onSubmit: SubmitHandler<TFormValues>;
+  onSubmit: SubmitHandler<z.output<Schema>>;
   children: (props: {
-    register: UseFormRegister<TFormValues>;
-    errors: FieldErrors<TFormValues>;
-    watch: UseFormWatch<TFormValues>;
-    state: FormState<TFormValues>;
+    register: UseFormRegister<z.input<Schema>>;
+    errors: FieldErrors<z.input<Schema>>;
+    watch: UseFormWatch<z.input<Schema>>;
+    state: FormState<z.input<Schema>>;
   }) => React.ReactNode;
   id?: string;
   className?: string;
 };
 
-export const Form = <
-  Schema extends ZodType<any, any, any>,
-  TFormValues extends FieldValues = z.infer<Schema>,
->({
+export const Form = <Schema extends ZodType<FieldValues, FieldValues>>({
   schema,
   onSubmit,
   children,
   id,
   className,
-}: FormProps<TFormValues, Schema>) => {
-  const methods = useForm<TFormValues>({
+}: FormProps<Schema>) => {
+  const methods = useForm<z.input<Schema>, unknown, z.output<Schema>>({
     resolver: zodResolver(schema),
     criteriaMode: "all",
     mode: "onBlur",

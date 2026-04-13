@@ -8,6 +8,7 @@ import { useContext, useState } from "react";
 import { paths } from "@/config/paths";
 import { AuthContext } from "@/lib/auth-context";
 import { env } from "@/config/env";
+import { ApiError } from "@/types/api";
 
 const schema = z.object({
   email: z.string().nonempty("Email is required").email("Invalid email"),
@@ -36,8 +37,10 @@ export const LoginForm = ({ onSuccess, navigateTo }: LoginForm) => {
     try {
       await ctx.login(data);
       onSuccess();
-    } catch (err: any) {
-      setErrMessage(err.message);
+    } catch (err) {
+      if (err instanceof ApiError) {
+        setErrMessage(err.message);
+      }
     }
   };
 
