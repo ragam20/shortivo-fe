@@ -1,6 +1,7 @@
 import { paths } from "@/config/paths";
 import { createBrowserRouter } from "react-router";
 import { RouterProvider } from "react-router/dom";
+import { useEffect } from "react";
 import { Landing } from "./routes/landing";
 import { LoginRoute } from "./routes/auth/login";
 import { RegisterRoute } from "./routes/auth/register";
@@ -16,6 +17,27 @@ import { DashboardPerLinkAnalyticsPreviewRoute } from "./routes/app/dashboard-pe
 import { EditLinkRoute } from "./routes/app/edit-link";
 import { RouteErrorBoundary } from "./route-error-boundary";
 import { ProtectedRoute } from "@/lib/auth-provider";
+import { trackPageView } from "@/lib/analytics";
+
+let lastTrackedPagePath: string | null = null;
+
+const trackCurrentPageView = () => {
+  const pagePath = `${window.location.pathname}${window.location.search}${window.location.hash}`;
+
+  if (lastTrackedPagePath === pagePath) {
+    return;
+  }
+
+  lastTrackedPagePath = pagePath;
+
+  window.setTimeout(() => {
+    trackPageView({
+      page_path: pagePath,
+      page_location: `${window.location.origin}${pagePath}`,
+      page_title: document.title,
+    });
+  }, 0);
+};
 
 const createAppRouter = createBrowserRouter([
   {
@@ -91,6 +113,12 @@ const createAppRouter = createBrowserRouter([
 ]);
 
 export const AppRouter = () => {
+  useEffect(() => {
+    trackCurrentPageView();
+
+    return createAppRouter.subscribe(trackCurrentPageView);
+  }, []);
+
   return (
     <>
       <RouterProvider router={createAppRouter} />

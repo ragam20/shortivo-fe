@@ -21,6 +21,23 @@ export const Landing = () => {
 
   const isRedirecting = !auth?.isLoading && !!auth?.account;
 
+  const trackLandingSelection = (itemId: string, source: string) => {
+    trackEvent("select_content", {
+      content_type: "landing_cta",
+      item_id: itemId,
+      source,
+    });
+  };
+
+  const navigateFromLanding = (
+    path: string,
+    itemId: string,
+    source: string,
+  ) => {
+    trackLandingSelection(itemId, source);
+    navigate(path);
+  };
+
   useEffect(() => {
     if (!isRedirecting) {
       return;
@@ -80,7 +97,11 @@ export const Landing = () => {
               </li>
               <li
                 onClick={() => {
-                  navigate(paths.pricing.path);
+                  navigateFromLanding(
+                    paths.pricing.path,
+                    "pricing",
+                    "mobile_drawer",
+                  );
                 }}
               >
                 <H3>Pricing</H3>
@@ -97,7 +118,11 @@ export const Landing = () => {
                 variant={"outline"}
                 className="w-full py-5 text-md active:bg-gray-100"
                 onClick={() => {
-                  navigate(paths.auth.login.path);
+                  navigateFromLanding(
+                    paths.auth.login.path,
+                    "sign_in",
+                    "mobile_drawer",
+                  );
                 }}
               >
                 Sign in
@@ -105,7 +130,11 @@ export const Landing = () => {
               <Button
                 className="w-full py-5 font-bold text-md active:bg-primary/80"
                 onClick={() => {
-                  navigate(paths.auth.register.path);
+                  navigateFromLanding(
+                    paths.auth.register.path,
+                    "sign_up",
+                    "mobile_drawer",
+                  );
                 }}
               >
                 Sign up
@@ -126,10 +155,7 @@ export const Landing = () => {
             </Link>
             <Link
               onClick={() =>
-                trackEvent("navigation_clicked", {
-                  target: "pricing",
-                  source: "landing_header",
-                })
+                trackLandingSelection("pricing", "desktop_header")
               }
               className="cursor-pointer"
               to={paths.pricing.path}
@@ -145,7 +171,11 @@ export const Landing = () => {
               variant={"outline"}
               className="py-5 px-4"
               onClick={() => {
-                navigate(paths.auth.login.path);
+                navigateFromLanding(
+                  paths.auth.login.path,
+                  "sign_in",
+                  "desktop_header",
+                );
               }}
             >
               Sign in
@@ -153,7 +183,11 @@ export const Landing = () => {
             <Button
               className="py-5 px-4 font-bold"
               onClick={() => {
-                navigate(paths.auth.register.path);
+                navigateFromLanding(
+                  paths.auth.register.path,
+                  "get_started",
+                  "desktop_header",
+                );
               }}
             >
               Get Started
@@ -218,7 +252,11 @@ export const Landing = () => {
               />
               <Button
                 onClick={() => {
-                  navigate(paths.auth.login.path);
+                  navigateFromLanding(
+                    paths.auth.login.path,
+                    "get_free_link",
+                    "hero_card",
+                  );
                 }}
                 className="mt-4 px-6 py-5 after:content-['→']"
               >
