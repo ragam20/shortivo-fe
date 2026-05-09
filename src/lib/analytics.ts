@@ -21,7 +21,8 @@ declare global {
   }
 }
 
-const canUseDOM = () => typeof window !== "undefined" && typeof document !== "undefined";
+const canUseDOM = () =>
+  typeof window !== "undefined" && typeof document !== "undefined";
 
 const getMeasurementId = () => env.GOOGLE_ANALYTICS.trim();
 
@@ -79,7 +80,31 @@ export const initGA = () => {
   const gtag = ensureGtag();
 
   gtag("js", new Date());
-  gtag("config", measurementId);
+  gtag("config", measurementId, {
+    send_page_view: false,
+  });
+};
+
+export const trackPageView = (params?: AnalyticsEventParams) => {
+  if (!canUseDOM()) {
+    return;
+  }
+
+  const measurementId = getMeasurementId();
+
+  if (!measurementId) {
+    return;
+  }
+
+  const gtag = ensureGtag();
+  const pageParams = removeUndefinedParams({
+    page_title: document.title,
+    page_location: window.location.href,
+    page_path: `${window.location.pathname}${window.location.search}${window.location.hash}`,
+    ...params,
+  });
+
+  gtag("config", measurementId, pageParams);
 };
 
 export const trackEvent = (
