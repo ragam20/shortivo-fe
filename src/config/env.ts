@@ -2,12 +2,16 @@ import * as z from "zod";
 
 const createEnv = () => {
   const EnvSchema = z.object({
-    API_URL: z.string(),
+    API_URL: z.string().min(1),
     APP_URL: z
       .string()
+      .min(1)
       .optional()
       .transform((val) => val || window.location.origin),
-    GOOGLE_ANALYTICS: z.string(),
+    GOOGLE_ANALYTICS: z
+      .string()
+      .trim()
+      .regex(/^G-[A-Z0-9]+$/, "Must be a GA4 measurement ID like G-XXXXXXXXXX"),
   });
 
   const envVars = Object.entries(import.meta.env).reduce<
