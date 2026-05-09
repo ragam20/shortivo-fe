@@ -14,9 +14,10 @@ export const RegisterRoute = () => {
       <AuthLayout title="Register your account | Shortivo">
         <RegisterForm
           onSuccess={() => {
-            trackEvent("user_registered", {
-              target: "register",
-              source: "register-form",
+            trackEvent("sign_up", {
+              method: "email",
+              source: "register_form",
+              redirect_to: redirectTo || paths.app.root.path,
             });
             navigate(redirectTo || paths.app.root.path, { replace: true });
           }}
