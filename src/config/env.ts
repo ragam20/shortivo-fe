@@ -7,6 +7,7 @@ const createEnv = () => {
       .string()
       .optional()
       .transform((val) => val || window.location.origin),
+    GOOGLE_ANALYTICS: z.string(),
   });
 
   const envVars = Object.entries(import.meta.env).reduce<

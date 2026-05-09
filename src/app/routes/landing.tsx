@@ -8,6 +8,7 @@ import { Link, useNavigate } from "react-router";
 import { paths } from "@/config/paths";
 import { AuthContext } from "@/lib/auth-context";
 import { BadgeCheckIcon, Menu as MenuIC, X as XIC } from "lucide-react";
+import { trackEvent } from "@/lib/analytics";
 
 const landingRedirectDelayMs = 2000;
 
@@ -123,7 +124,16 @@ export const Landing = () => {
             <Link className="cursor-pointer" to={""}>
               <H4 className="text-md font-medium">Features</H4>
             </Link>
-            <Link className="cursor-pointer" to={paths.pricing.path}>
+            <Link
+              onClick={() =>
+                trackEvent("navigation_clicked", {
+                  target: "pricing",
+                  source: "landing_header",
+                })
+              }
+              className="cursor-pointer"
+              to={paths.pricing.path}
+            >
               <H4 className="text-md font-medium">Pricing</H4>
             </Link>
             <Link className="cursor-pointer" to={""}>
