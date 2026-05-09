@@ -80,9 +80,7 @@ export const initGA = () => {
   const gtag = ensureGtag();
 
   gtag("js", new Date());
-  gtag("config", measurementId, {
-    send_page_view: false,
-  });
+  gtag("config", measurementId);
 };
 
 export const trackPageView = (params?: AnalyticsEventParams) => {
