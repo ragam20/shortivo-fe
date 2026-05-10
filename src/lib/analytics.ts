@@ -1,5 +1,7 @@
 import { env } from "@/config/env";
 
+const isDebugMode = env.MODE_ENV === "development";
+
 type AnalyticsEventParamValue = string | number | boolean | null | undefined;
 
 export type AnalyticsEventParams = Record<
@@ -75,12 +77,17 @@ export const initGA = () => {
   script.async = true;
   script.src = `https://www.googletagmanager.com/gtag/js?id=${measurementId}`;
 
-  document.head.appendChild(script);
-
   const gtag = ensureGtag();
 
-  gtag("js", new Date());
-  gtag("config", measurementId);
+  script.onload = () => {
+    gtag("js", new Date());
+    gtag("config", measurementId, {
+      send_page_view: false,
+      debug_mode: isDebugMode,
+    });
+  };
+
+  document.head.appendChild(script);
 };
 
 export const trackPageView = (params?: AnalyticsEventParams) => {
@@ -99,6 +106,7 @@ export const trackPageView = (params?: AnalyticsEventParams) => {
     page_title: document.title,
     page_location: window.location.href,
     page_path: `${window.location.pathname}${window.location.search}${window.location.hash}`,
+    debug_mode: isDebugMode,
     ...params,
   });
 
@@ -126,5 +134,7 @@ export const trackEvent = (
     ...removeUndefinedParams(params),
     send_to: measurementId,
     transport_type: "beacon",
+
+    debug_mode: isDebugMode,
   });
 };

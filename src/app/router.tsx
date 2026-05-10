@@ -36,7 +36,7 @@ const trackCurrentPageView = () => {
       page_location: `${window.location.origin}${pagePath}`,
       page_title: document.title,
     });
-  }, 0);
+  }, 1);
 };
 
 const createAppRouter = createBrowserRouter([
